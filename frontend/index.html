@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        RailTrack — Live Indian Railway Tracking
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="topbar">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            🚆
+        </div>
+
+        <div>
+
+            <strong>
+                RailTrack
+            </strong>
+
+            <span>
+                Live Indian Railway Tracking
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div
+        id="connectionStatus"
+        class="connection disconnected"
+    >
+        ● Checking backend...
+    </div>
+
+</header>
+
+
+
+<main class="container">
+
+
+<!-- =====================================================
+     HERO
+===================================================== -->
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <div class="eyebrow">
+            INDIAN RAILWAY LIVE TRACKING
+        </div>
+
+
+        <h1>
+            Where is your train?
+        </h1>
+
+
+        <p class="hero-text">
+
+            Search your train and see live
+            location, journey duration, delay,
+            ETA, route and station information.
+
+        </p>
+
+
+        <!-- TABS -->
+
+        <div class="tabs">
+
+            <button
+                id="trainTab"
+                class="tab active"
+                type="button"
+            >
+                🚆 Search by Train
+            </button>
+
+
+            <button
+                id="betweenTab"
+                class="tab"
+                type="button"
+            >
+                📍 Between Stations
+            </button>
+
+        </div>
+
+
+
+        <!-- =================================================
+             TRAIN SEARCH
+        ================================================== -->
+
+        <form
+            id="trainSearchForm"
+            class="search-form"
+        >
+
+            <div class="field">
+
+                <label>
+                    TRAIN NUMBER
+                </label>
+
+                <input
+                    id="trainNumber"
+                    type="text"
+                    maxlength="5"
+                    inputmode="numeric"
+                    placeholder="e.g. 12827"
+                    autocomplete="off"
+                    aria-label="Train number"
+                    title="Train number"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    JOURNEY DATE
+                    <span>
+                        OPTIONAL
+                    </span>
+                </label>
+
+                <input
+                    id="trainDate"
+                    type="date"
+                    aria-label="Journey date"
+                    title="Journey date"
+                >
+
+            </div>
+
+
+            <button
+                id="trainSearchButton"
+                class="search-button"
+                type="submit"
+            >
+                Search Train
+            </button>
+
+        </form>
+
+
+
+        <!-- =================================================
+             BETWEEN STATION SEARCH
+        ================================================== -->
+
+        <form
+            id="betweenSearchForm"
+            class="search-form between-form hidden"
+        >
+
+            <div class="field">
+
+                <label>
+                    FROM STATION
+                </label>
+
+                <input
+                    id="fromStation"
+                    type="text"
+                    placeholder="e.g. BQA"
+                    autocomplete="off"
+                    aria-label="From station"
+                    title="From station"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    DESTINATION STATION
+                </label>
+
+                <input
+                    id="toStation"
+                    type="text"
+                    placeholder="e.g. MSA"
+                    autocomplete="off"
+                    aria-label="Destination station"
+                    title="Destination station"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    JOURNEY DATE
+                    <span>
+                        OPTIONAL
+                    </span>
+                </label>
+
+                <input
+                    id="betweenDate"
+                    type="date"
+                    aria-label="Journey date"
+                    title="Journey date"
+                >
+
+            </div>
+
+
+            <button
+                id="betweenSearchButton"
+                class="search-button"
+                type="submit"
+            >
+                Search Trains
+            </button>
+
+        </form>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     ERROR
+===================================================== -->
+
+<div
+    id="errorBox"
+    class="error-box hidden"
+></div>
+
+
+
+<!-- =====================================================
+     BETWEEN RESULTS
+===================================================== -->
+
+<section
+    id="betweenResults"
+    class="section hidden"
+>
+
+    <div class="section-title">
+
+        <div>
+
+            <h2>
+                Available Trains
+            </h2>
+
+            <p id="betweenSubtitle">
+                Trains found between selected stations
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div
+        id="trainList"
+        class="train-list"
+    ></div>
+
+</section>
+
+
+
+<!-- =====================================================
+     EMPTY STATE
+===================================================== -->
+
+<section
+    id="emptyState"
+    class="empty-card"
+>
+
+    <div class="empty-icon">
+        🚆
+    </div>
+
+
+    <h2>
+        Search your train
+    </h2>
+
+
+    <p>
+
+        Enter a 5-digit train number
+        to see real-time running
+        information.
+
+    </p>
+
+
+    <div class="feature-pills">
+
+        <span>
+            📍 Live Location
+        </span>
+
+        <span>
+            ⏱ Total Duration
+        </span>
+
+        <span>
+            ⏱ ETA
+        </span>
+
+        <span>
+            🗺 Route Map
+        </span>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     DASHBOARD
+===================================================== -->
+
+<section
+    id="dashboard"
+    class="dashboard hidden"
+>
+
+
+<!-- =====================================================
+     TRAIN HEADER
+===================================================== -->
+
+<div class="train-header">
+
+    <div>
+
+        <div
+            id="statusBadge"
+            class="status-badge"
+        >
+            ● LIVE
+        </div>
+
+
+        <h2 id="trainName">
+            —
+        </h2>
+
+
+        <p id="trainRoute">
+            —
+        </p>
+
+    </div>
+
+
+    <div class="train-number-box">
+
+        <span>
+            TRAIN NUMBER
+        </span>
+
+        <strong id="displayTrainNumber">
+            —
+        </strong>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     MAIN STATS
+===================================================== -->
+
+<div class="stats-grid">
+
+
+    <!-- =================================================
+         TOTAL JOURNEY DURATION
+    ================================================== -->
+
+    <div class="stat-card">
+
+        <div class="stat-icon">
+            ⏱️
+        </div>
+
+        <div>
+
+            <span>
+                TOTAL DURATION
+            </span>
+
+            <!--
+                IMPORTANT:
+                Keep id="currentSpeed"
+                because app.js uses this ID.
+            -->
+
+            <strong id="currentSpeed">
+                —
+            </strong>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+         MAX SPEED
+    ================================================== -->
+
+    <div class="stat-card">
+
+        <div class="stat-icon">
+            🏁
+        </div>
+
+        <div>
+
+            <span>
+                MAX SPEED
+            </span>
+
+            <strong id="maxSpeed">
+                —
+            </strong>
+
+            <small>
+                km/h
+            </small>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+         CURRENT STATION
+    ================================================== -->
+
+    <div class="stat-card">
+
+        <div class="stat-icon">
+            📍
+        </div>
+
+        <div>
+
+            <span>
+                CURRENT STATION
+            </span>
+
+            <strong id="currentStation">
+                —
+            </strong>
+
+            <small id="currentStationCode">
+                —
+            </small>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+         NEXT STATION
+    ================================================== -->
+
+    <div class="stat-card">
+
+        <div class="stat-icon">
+            🚉
+        </div>
+
+        <div>
+
+            <span>
+                NEXT STATION
+            </span>
+
+            <strong id="nextStation">
+                —
+            </strong>
+
+            <small id="nextStationCode">
+                —
+            </small>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+         DELAY
+    ================================================== -->
+
+    <div class="stat-card">
+
+        <div class="stat-icon">
+            ⏰
+        </div>
+
+        <div>
+
+            <span>
+                DELAY
+            </span>
+
+            <strong id="delay">
+                0
+            </strong>
+
+            <small>
+                min
+            </small>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+         JOURNEY PROGRESS
+    ================================================== -->
+
+    <div class="stat-card">
+
+        <div class="stat-icon">
+            📊
+        </div>
+
+        <div>
+
+            <span>
+                JOURNEY PROGRESS
+            </span>
+
+            <strong id="progress">
+                —
+            </strong>
+
+            <small>
+                %
+            </small>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     MAP + ETA
+===================================================== -->
+
+<div class="content-grid">
+
+
+    <!-- MAP -->
+
+    <div class="panel map-panel">
+
+        <div class="panel-header">
+
+            <div>
+
+                <h2>
+                    Live Train Location
+                </h2>
+
+                <p>
+                    Real-time train movement
+                </p>
+
+            </div>
+
+
+            <div
+                id="mapLiveBadge"
+                class="live-badge"
+            >
+                ● LIVE
+            </div>
+
+        </div>
+
+
+        <div
+            id="map"
+            class="map"
+        ></div>
+
+
+        <div class="map-info">
+
+            <div>
+
+                <span>
+                    PREVIOUS
+                </span>
+
+                <strong id="previousStation">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="arrow">
+                →
+            </div>
+
+
+            <div>
+
+                <span>
+                    CURRENT
+                </span>
+
+                <strong id="mapCurrentStation">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="arrow">
+                →
+            </div>
+
+
+            <div>
+
+                <span>
+                    NEXT
+                </span>
+
+                <strong id="mapNextStation">
+                    —
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ETA -->
+
+    <div class="panel">
+
+        <div class="panel-header">
+
+            <div>
+
+                <h2>
+                    Live ETA
+                </h2>
+
+                <p>
+                    Next station prediction
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="eta-box">
+
+            <span>
+                DESTINATION
+            </span>
+
+
+            <strong id="destinationName">
+                —
+            </strong>
+
+
+            <div class="eta-main">
+
+                <span>
+                    NEXT STATION ETA
+                </span>
+
+                <strong id="etaTime">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="eta-row">
+
+                <span>
+                    Next station
+                </span>
+
+                <strong id="etaNext">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="eta-row">
+
+                <span>
+                    Scheduled arrival
+                </span>
+
+                <strong id="scheduledArrival">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="eta-row">
+
+                <span>
+                    Expected arrival
+                </span>
+
+                <strong id="expectedArrival">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="eta-row">
+
+                <span>
+                    Station departure
+                </span>
+
+                <strong id="stationDeparture">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="eta-row">
+
+                <span>
+                    Platform
+                </span>
+
+                <strong id="platform">
+                    —
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     STATION TIMING
+===================================================== -->
+
+<div class="panel timing-panel">
+
+    <div class="panel-header">
+
+        <div>
+
+            <h2>
+                Station Timing
+            </h2>
+
+            <p>
+                Previous, current and next station timing
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="timing-grid">
+
+
+        <!-- PREVIOUS -->
+
+        <div class="timing-card">
+
+            <div class="timing-icon">
+                ✓
+            </div>
+
+            <div>
+
+                <span>
+                    PREVIOUS STATION
+                </span>
+
+                <strong id="previousTimingStation">
+                    —
+                </strong>
+
+                <small id="previousTimingCode">
+                    —
+                </small>
+
+            </div>
+
+
+            <div class="timing-values">
+
+                <div>
+
+                    <span>
+                        Arrival
+                    </span>
+
+                    <strong id="previousArrival">
+                        —
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Departure
+                    </span>
+
+                    <strong id="previousDeparture">
+                        —
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- CURRENT -->
+
+        <div class="timing-card current-timing">
+
+            <div class="timing-icon">
+                🚆
+            </div>
+
+            <div>
+
+                <span>
+                    CURRENT STATION
+                </span>
+
+                <strong id="currentTimingStation">
+                    —
+                </strong>
+
+                <small id="currentTimingCode">
+                    —
+                </small>
+
+            </div>
+
+
+            <div class="timing-values">
+
+                <div>
+
+                    <span>
+                        Actual Arrival
+                    </span>
+
+                    <strong id="currentArrival">
+                        —
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Departure
+                    </span>
+
+                    <strong id="currentDeparture">
+                        —
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- NEXT -->
+
+        <div class="timing-card">
+
+            <div class="timing-icon">
+                →
+            </div>
+
+            <div>
+
+                <span>
+                    NEXT STATION
+                </span>
+
+                <strong id="nextTimingStation">
+                    —
+                </strong>
+
+                <small id="nextTimingCode">
+                    —
+                </small>
+
+            </div>
+
+
+            <div class="timing-values">
+
+                <div>
+
+                    <span>
+                        Scheduled Arrival
+                    </span>
+
+                    <strong id="nextArrival">
+                        —
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Departure
+                    </span>
+
+                    <strong id="nextDeparture">
+                        —
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     JOURNEY PROGRESS
+===================================================== -->
+
+<div class="panel progress-panel">
+
+    <div class="panel-header">
+
+        <div>
+
+            <h2>
+                Journey Progress
+            </h2>
+
+            <p>
+                Train movement along route
+            </p>
+
+        </div>
+
+
+        <strong id="distanceText">
+            —
+        </strong>
+
+    </div>
+
+
+    <div class="progress-track">
+
+        <div
+            id="progressBar"
+            class="progress-bar"
+        ></div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     COMPLETE ROUTE
+===================================================== -->
+
+<div class="panel">
+
+    <div class="panel-header">
+
+        <div>
+
+            <h2>
+                Complete Train Route
+            </h2>
+
+            <p>
+                Station-by-station journey
+            </p>
+
+        </div>
+
+
+        <span id="stationCount">
+            0 stations
+        </span>
+
+    </div>
+
+
+    <div
+        id="routeList"
+        class="route-list"
+    ></div>
+
+</div>
+
+
+
+<!-- =====================================================
+     UPDATE
+===================================================== -->
+
+<div class="update-bar">
+
+    <span>
+        Last updated:
+    </span>
+
+
+    <strong id="lastUpdated">
+        —
+    </strong>
+
+
+    <button
+        id="refreshButton"
+        type="button"
+    >
+        ↻ Refresh Now
+    </button>
+
+</div>
+
+
+</section>
+
+</main>
+
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer>
+
+    <span>
+        © 2026 RailTrack
+    </span>
+
+    <span>
+        Live Indian Railway Tracking
+    </span>
+
+    <span>
+        Real-time railway data
+    </span>
+
+</footer>
+
+
+
+<!-- =====================================================
+     LEAFLET
+===================================================== -->
+
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+></script>
+
+
+
+<!-- =====================================================
+     APP
+===================================================== -->
+
+<script
+    src="/app.js"
+></script>
+
+
+</body>
+
+</html>
