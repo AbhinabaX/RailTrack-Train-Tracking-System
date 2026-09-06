@@ -6521,61 +6521,31 @@ function removeMapLayer(layer) {
 ========================================================= */
 
 function setupStationSwap() {
-
-    if (
-        !swapStationsButton ||
-        !fromStationInput ||
-        !toStationInput
-    ) {
+    if (!swapStationsButton || !fromStationInput || !toStationInput) {
         return;
     }
 
+    swapStationsButton.addEventListener("click", () => {
 
-swapStationsButton.addEventListener(
-    "click",
-    () => {
+        // Start animation
+        betweenSearchForm.classList.remove("swap-playing");
 
-        const fromValue =
-            fromStationInput.value;
+        // Force browser reflow so animation can replay every click
+        void betweenSearchForm.offsetWidth;
 
-        const toValue =
-            toStationInput.value;
+        betweenSearchForm.classList.add("swap-playing");
 
+        // Swap station values
+        const temp = fromStationInput.value;
 
-        swapStationsButton.classList.remove(
-            "swap-animate"
-        );
+        fromStationInput.value = toStationInput.value;
+        toStationInput.value = temp;
 
-        void swapStationsButton.offsetWidth;
-
-        swapStationsButton.classList.add(
-            "swap-animate"
-        );
-
-
-        fromStationInput.value =
-            toValue;
-
-        toStationInput.value =
-            fromValue;
-
-
-            // Keep autocomplete/results in sync
-            fromStationInput.dispatchEvent(
-                new Event("input", {
-                    bubbles: true
-                })
-            );
-
-            toStationInput.dispatchEvent(
-                new Event("input", {
-                    bubbles: true
-                })
-            );
-
-        }
-    );
-
+        // Remove animation class after animation finishes
+        setTimeout(() => {
+            betweenSearchForm.classList.remove("swap-playing");
+        }, 450);
+    });
 }
 /* =========================================================
    BETWEEN STATIONS

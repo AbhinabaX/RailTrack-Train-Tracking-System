@@ -2667,21 +2667,71 @@ footer {
 
     /* Swap animation */
 
-.swap-stations-button.swap-animate {
-    animation: swapRotate 0.45s ease;
+/* Smooth station swap animation */
+.between-form.swap-playing .field:nth-of-type(1) {
+    animation: stationFromSwap .45s ease;
 }
 
-@keyframes swapRotate {
+.between-form.swap-playing .field:nth-of-type(2) {
+    animation: stationToSwap .45s ease;
+}
+
+@keyframes stationFromSwap {
     0% {
-        transform: rotate(0deg) scale(1);
+        transform: translateX(0);
     }
 
-    50% {
-        transform: rotate(180deg) scale(1.08);
+    35% {
+        transform: translateX(10px);
+    }
+
+    70% {
+        transform: translateX(-4px);
     }
 
     100% {
-        transform: rotate(360deg) scale(1);
+        transform: translateX(0);
+    }
+}
+
+@keyframes stationToSwap {
+    0% {
+        transform: translateX(0);
+    }
+
+    35% {
+        transform: translateX(-10px);
+    }
+
+    70% {
+        transform: translateX(4px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+/* Swap button animation */
+.between-form.swap-playing .swap-stations-button {
+    animation: swapPulse .45s ease;
+}
+
+@keyframes swapPulse {
+    0% {
+        transform: scale(1);
+    }
+
+    40% {
+        transform: scale(1.12);
+    }
+
+    70% {
+        transform: scale(.96);
+    }
+
+    100% {
+        transform: scale(1);
     }
 }
 
