@@ -21,6 +21,7 @@ let map = null;
 let routeLayer = null;
 let stationLayer = null;
 let trainMarker = null;
+let travelledRouteLayer = null;
 let swapStationsButton = null;
 
 let currentTrainNumber = "";
@@ -2945,66 +2946,113 @@ function renderDashboard(data) {
         );
 
 
-    const nextArrival =
-        getArrival(
-            next,
-            nextStop
-        );
+/* =====================================================
+   NEXT ETA
+===================================================== */
 
-    const nextDeparture =
-        getDeparture(
-            next,
-            nextStop
-        );
+const nextArrival =
+    next.expectedArrival ||
+    next.eta ||
+    next.scheduledArrival ||
+    nextStop?.expectedArrival ||
+    nextStop?.scheduledArrival ||
+    null;
 
 
-    setText(
-        "etaTime",
-        formatDateTime(
-            nextArrival
-        )
-    );
+const nextDeparture =
+    next.expectedDeparture ||
+    next.scheduledDeparture ||
+    nextStop?.expectedDeparture ||
+    nextStop?.scheduledDeparture ||
+    null;
 
-    setText(
-        "etaNext",
-        nextName
-    );
 
-    setText(
-        "scheduledArrival",
-        formatDateTime(
-            getScheduledArrival(
-                next,
-                nextStop
-            )
-        )
-    );
+const scheduledArrival =
+    next.scheduledArrival ||
+    nextStop?.scheduledArrival ||
+    null;
 
-    setText(
-        "expectedArrival",
-        formatDateTime(
-            getExpectedArrival(
-                next,
-                nextStop
-            ) ||
-            nextArrival
-        )
-    );
 
-    setText(
-        "stationDeparture",
-        formatDateTime(
-            nextDeparture
-        )
-    );
+const expectedArrival =
+    next.expectedArrival ||
+    next.eta ||
+    nextStop?.expectedArrival ||
+    nextArrival ||
+    null;
 
-    setText(
-        "platform",
-        getPlatform(
-            next,
-            nextStop
-        )
-    );
+
+/* -----------------------------------------------------
+   NEXT STATION ETA
+----------------------------------------------------- */
+
+setText(
+    "etaTime",
+    formatDateTime(
+        expectedArrival
+    )
+);
+
+
+/* -----------------------------------------------------
+   NEXT STATION
+----------------------------------------------------- */
+
+setText(
+    "etaNext",
+    next.name ||
+    next.stationName ||
+    next.code ||
+    next.stationCode ||
+    "—"
+);
+
+
+/* -----------------------------------------------------
+   SCHEDULED ARRIVAL
+----------------------------------------------------- */
+
+setText(
+    "scheduledArrival",
+    formatDateTime(
+        scheduledArrival
+    )
+);
+
+
+/* -----------------------------------------------------
+   EXPECTED ARRIVAL
+----------------------------------------------------- */
+
+setText(
+    "expectedArrival",
+    formatDateTime(
+        expectedArrival
+    )
+);
+
+
+/* -----------------------------------------------------
+   STATION DEPARTURE
+----------------------------------------------------- */
+
+setText(
+    "stationDeparture",
+    formatDateTime(
+        nextDeparture
+    )
+);
+
+
+/* -----------------------------------------------------
+   PLATFORM
+----------------------------------------------------- */
+
+setText(
+    "platform",
+    next.platform ||
+    nextStop?.platform ||
+    "—"
+);
 
 
     /* =====================================================
@@ -3079,26 +3127,70 @@ function renderDashboard(data) {
        STATION TIMING
     ===================================================== */
 
-    renderStationTiming(
-        previous,
-        previousStop,
-        current,
-        currentStop,
-        next,
-        nextStop
-    );
+renderStationTiming(
+    previous,
+    previousStop,
+    current,
+    currentStop,
+    next,
+    nextStop
+);
 
+renderRoute(stops, current);
 
-    /* =====================================================
-       ROUTE + MAP
-    ===================================================== */
+// Scroll route timeline to current station
+setTimeout(() => {
+    const currentStationElement =
+        document.querySelector(".route-item.current");
 
-    renderRoute(
-        stops,
-        current
-    );
+    if (currentStationElement) {
+        currentStationElement.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+    }
+}, 150);
 
-    renderLiveMap(data);
+renderLiveMap(data);
+}
+function scrollToCurrentStation(current, stops) {
+
+    const currentCode =
+        getStationCode(current);
+
+    const currentStop =
+        findStop(
+            stops,
+            current,
+            currentCode
+        );
+
+    if (!currentStop) {
+        return;
+    }
+
+    const sequence =
+        currentStop.sequence ??
+        currentStop.seq ??
+        currentStop.stopSequence;
+
+    if (sequence == null) {
+        return;
+    }
+
+    const currentElement =
+        document.querySelector(
+            `[data-sequence="${sequence}"]`
+        );
+
+    if (!currentElement) {
+        return;
+    }
+
+    currentElement.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
 }
 
 
@@ -5238,6 +5330,52 @@ function renderRoute(stops, current) {
                 )
                 .join("");
 
+                        /* =================================================
+           AUTO SCROLL TO CURRENT STATION
+        ================================================= */
+
+       /* =================================================
+   AUTO SCROLL INSIDE ROUTE ONLY
+================================================= */
+
+/* =================================================
+   AUTO SCROLL TO CURRENT STATION
+   ROUTE LIST ONLY
+================================================= */
+
+if (currentIndex >= 0) {
+
+    requestAnimationFrame(() => {
+
+        const currentElement =
+            container.querySelector(
+                ".railway-station.current"
+            );
+
+        if (!currentElement) {
+            return;
+        }
+
+        const containerRect =
+            container.getBoundingClientRect();
+
+        const currentRect =
+            currentElement.getBoundingClientRect();
+
+        const targetScroll =
+            container.scrollTop +
+            (currentRect.top - containerRect.top) -
+            (container.clientHeight / 2) +
+            (currentElement.offsetHeight / 2);
+
+        container.scrollTo({
+            top: targetScroll,
+            behavior: "smooth"
+        });
+
+    });
+
+}
 
         /* =================================================
            VIEW ALL / HIDE ALL BUTTON
@@ -5575,6 +5713,437 @@ function getRouteGeoJSON(
 /* =========================================================
    LIVE MAP
 ========================================================= */
+/* =========================================================
+   DRAW TRAVELLED ROUTE
+   Uses the REAL GeoJSON railway path.
+========================================================= */
+
+function drawTravelledRoute(
+    routeGeoJSON,
+    trainPosition,
+    stops,
+    current
+) {
+
+    if (
+        !map ||
+        !routeGeoJSON ||
+        !trainPosition
+    ) {
+        return;
+    }
+
+
+    const lines =
+        getGeoJSONLineCoordinates(
+            routeGeoJSON
+        );
+
+
+    if (
+        !Array.isArray(lines) ||
+        !lines.length
+    ) {
+        return;
+    }
+
+
+    const trainLat =
+        Number(trainPosition[0]);
+
+    const trainLng =
+        Number(trainPosition[1]);
+
+
+    if (
+        !Number.isFinite(trainLat) ||
+        !Number.isFinite(trainLng)
+    ) {
+        return;
+    }
+
+
+    /*
+     * -----------------------------------------------------
+     * Find the GeoJSON line which is closest to the train.
+     * -----------------------------------------------------
+     */
+
+    let bestLine = null;
+    let bestIndex = -1;
+    let bestDistance = Infinity;
+
+
+    lines.forEach(
+        line => {
+
+            if (
+                !Array.isArray(line) ||
+                line.length < 2
+            ) {
+                return;
+            }
+
+
+            line.forEach(
+                (point, index) => {
+
+                    if (
+                        !Array.isArray(point) ||
+                        point.length < 2
+                    ) {
+                        return;
+                    }
+
+
+                    const lng =
+                        Number(point[0]);
+
+                    const lat =
+                        Number(point[1]);
+
+
+                    if (
+                        !Number.isFinite(lat) ||
+                        !Number.isFinite(lng)
+                    ) {
+                        return;
+                    }
+
+
+                    const distance =
+                        Math.pow(
+                            lat - trainLat,
+                            2
+                        ) +
+                        Math.pow(
+                            lng - trainLng,
+                            2
+                        );
+
+
+                    if (
+                        distance <
+                        bestDistance
+                    ) {
+
+                        bestDistance =
+                            distance;
+
+                        bestLine =
+                            line;
+
+                        bestIndex =
+                            index;
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+
+    if (
+        !bestLine ||
+        bestIndex < 0
+    ) {
+        return;
+    }
+
+
+    /*
+     * -----------------------------------------------------
+     * Determine journey direction.
+     *
+     * Compare GeoJSON ends with first/last route stations.
+     * This prevents green route from being drawn backwards.
+     * -----------------------------------------------------
+     */
+
+    let firstStop = null;
+    let lastStop = null;
+
+
+    if (
+        Array.isArray(stops) &&
+        stops.length >= 2
+    ) {
+
+        const validStops =
+            stops
+                .map(getCoordinates)
+                .filter(Boolean);
+
+
+        if (
+            validStops.length >= 2
+        ) {
+
+            firstStop =
+                validStops[0];
+
+            lastStop =
+                validStops[
+                    validStops.length - 1
+                ];
+
+        }
+
+    }
+
+
+    if (
+        firstStop &&
+        lastStop
+    ) {
+
+        const firstPoint =
+            bestLine[0];
+
+        const lastPoint =
+            bestLine[
+                bestLine.length - 1
+            ];
+
+
+        const firstDistance =
+            Math.pow(
+                Number(firstPoint[1]) -
+                firstStop[0],
+                2
+            ) +
+            Math.pow(
+                Number(firstPoint[0]) -
+                firstStop[1],
+                2
+            );
+
+
+        const lastDistance =
+            Math.pow(
+                Number(lastPoint[1]) -
+                firstStop[0],
+                2
+            ) +
+            Math.pow(
+                Number(lastPoint[0]) -
+                firstStop[1],
+                2
+            );
+
+
+        /*
+         * If GeoJSON is backwards,
+         * reverse it.
+         */
+
+        if (
+            lastDistance <
+            firstDistance
+        ) {
+
+            bestLine =
+                [...bestLine].reverse();
+
+
+            /*
+             * Recalculate train index after reverse.
+             */
+
+            let closestIndex = 0;
+            let closestDistance = Infinity;
+
+
+            bestLine.forEach(
+                (point, index) => {
+
+                    const lng =
+                        Number(point[0]);
+
+                    const lat =
+                        Number(point[1]);
+
+
+                    const distance =
+                        Math.pow(
+                            lat - trainLat,
+                            2
+                        ) +
+                        Math.pow(
+                            lng - trainLng,
+                            2
+                        );
+
+
+                    if (
+                        distance <
+                        closestDistance
+                    ) {
+
+                        closestDistance =
+                            distance;
+
+                        closestIndex =
+                            index;
+
+                    }
+
+                }
+            );
+
+
+            bestIndex =
+                closestIndex;
+
+        }
+
+    }
+
+
+    /*
+     * -----------------------------------------------------
+     * Create green travelled section.
+     *
+     * IMPORTANT:
+     * Do NOT connect stations directly.
+     * We only use actual GeoJSON points.
+     * -----------------------------------------------------
+     */
+
+    const travelledCoordinates =
+        bestLine
+            .slice(
+                0,
+                bestIndex + 1
+            )
+            .map(
+                point => [
+                    Number(point[1]),
+                    Number(point[0])
+                ]
+            );
+
+
+    /*
+     * Add exact train position at the end.
+     */
+
+    travelledCoordinates.push(
+        [
+            trainLat,
+            trainLng
+        ]
+    );
+
+
+    if (
+        travelledCoordinates.length < 2
+    ) {
+        return;
+    }
+
+
+    travelledRouteLayer =
+        L.polyline(
+            travelledCoordinates,
+            {
+                color: "#16a34a",
+                weight: 6,
+                opacity: 0.95,
+                smoothFactor: 1,
+                lineCap: "round",
+                lineJoin: "round",
+                interactive: false
+            }
+        ).addTo(map);
+
+
+    /*
+     * Green line above blue route,
+     * but below train marker.
+     */
+
+    if (
+        travelledRouteLayer.bringToFront
+    ) {
+
+        travelledRouteLayer.bringToFront();
+
+    }
+
+
+    console.log(
+        "RailTrack: GREEN TRAVELLED ROUTE DRAWN"
+    );
+
+}
+function getGeoJSONLineCoordinates(geoJSON) {
+
+    if (!geoJSON) {
+        return [];
+    }
+
+    const lines = [];
+
+    function readGeometry(geometry) {
+
+        if (!geometry) {
+            return;
+        }
+
+        if (geometry.type === "LineString") {
+
+            if (
+                Array.isArray(geometry.coordinates) &&
+                geometry.coordinates.length >= 2
+            ) {
+                lines.push(geometry.coordinates);
+            }
+
+        } else if (geometry.type === "MultiLineString") {
+
+            if (Array.isArray(geometry.coordinates)) {
+
+                geometry.coordinates.forEach(
+                    coordinates => {
+
+                        if (
+                            Array.isArray(coordinates) &&
+                            coordinates.length >= 2
+                        ) {
+                            lines.push(coordinates);
+                        }
+
+                    }
+                );
+
+            }
+        }
+    }
+
+    if (geoJSON.type === "FeatureCollection") {
+
+        if (Array.isArray(geoJSON.features)) {
+
+            geoJSON.features.forEach(feature => {
+                readGeometry(feature?.geometry);
+            });
+
+        }
+
+    } else if (geoJSON.type === "Feature") {
+
+        readGeometry(geoJSON.geometry);
+
+    } else {
+
+        readGeometry(geoJSON);
+    }
+
+    return lines;
+}
 
 function renderLiveMap(data) {
 
@@ -5629,13 +6198,15 @@ function renderLiveMap(data) {
     );
 
 
-    removeMapLayer(routeLayer);
-    removeMapLayer(stationLayer);
-    removeMapLayer(trainMarker);
+removeMapLayer(routeLayer);
+removeMapLayer(travelledRouteLayer);
+removeMapLayer(stationLayer);
+removeMapLayer(trainMarker);
 
-    routeLayer = null;
-    stationLayer = null;
-    trainMarker = null;
+routeLayer = null;
+travelledRouteLayer = null;
+stationLayer = null;
+trainMarker = null;
 
 
     const routeGeoJSON =
@@ -5839,43 +6410,68 @@ function renderLiveMap(data) {
     });
 
 
-    const trainPosition =
-        calculateTrainPosition(
-            current,
-            previous,
-            next,
-            stops,
-            data
-        );
+/* =====================================================
+   TRAIN POSITION
+===================================================== */
+
+const trainPosition =
+    calculateTrainPosition(
+        current,
+        previous,
+        next,
+        stops,
+        data
+    );
 
 
-    if (trainPosition) {
+/*
+ * Draw travelled route using
+ * the REAL GeoJSON railway path.
+ */
 
-        createTrainMarker(
-            trainPosition,
-            data
-        );
+if (
+    trainPosition &&
+    routeGeoJSON
+) {
+
+    drawTravelledRoute(
+        routeGeoJSON,
+        trainPosition,
+        stops,
+        current
+    );
+
+}
 
 
-        map.setView(
-            trainPosition,
-            Math.max(
-                map.getZoom(),
-                9
-            ),
-            {
-                animate: true
-            }
-        );
+if (trainPosition) {
 
-    } else {
+    createTrainMarker(
+        trainPosition,
+        data
+    );
 
-        fitMapToRoute(
-            route,
-            stops,
-            routeGeoJSON
-        );
-    }
+
+    map.setView(
+        trainPosition,
+        Math.max(
+            map.getZoom(),
+            9
+        ),
+        {
+            animate: true
+        }
+    );
+
+} else {
+
+    fitMapToRoute(
+        route,
+        stops,
+        routeGeoJSON
+    );
+
+}
 
 
     routeLayer?.bringToBack();
