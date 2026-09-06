@@ -2,7 +2,96 @@ const express = require("express");
 
 const trainService = require("../services/trainService");
 
+const {
+  searchStations
+} = require("../services/stationService");
+
 const router = express.Router();
+
+
+/* =====================================================
+   STATION AUTOCOMPLETE / SEARCH
+
+   Example:
+   GET /api/lookup/search/stations?q=How
+
+   Example:
+   GET /api/lookup/search/stations?q=HWH&limit=10
+===================================================== */
+
+router.get(
+  "/lookup/search/stations",
+  async (req, res, next) => {
+
+    try {
+
+      const query =
+        String(
+          req.query.q || ""
+        ).trim();
+
+
+      const limit =
+        Number(
+          req.query.limit || 10
+        );
+
+
+      console.log("");
+      console.log("======================================");
+      console.log("STATION SEARCH REQUEST");
+      console.log("QUERY:", query);
+      console.log("LIMIT:", limit);
+      console.log("======================================");
+
+
+      /* -----------------------------------------------
+         Minimum 2 characters
+      ------------------------------------------------ */
+
+      if (query.length < 2) {
+
+        return res.status(200).json({
+
+          success: true,
+
+          data: []
+
+        });
+      }
+
+
+      /* -----------------------------------------------
+         Search real RailRadar stations
+      ------------------------------------------------ */
+
+      const stations =
+        await searchStations(
+          query,
+          limit
+        );
+
+
+      return res.status(200).json({
+
+        success: true,
+
+        data: stations
+
+      });
+
+    } catch (error) {
+
+      console.error(
+        "Station Search API ERROR:",
+        error
+      );
+
+
+      next(error);
+    }
+  }
+);
 
 
 /* =====================================================
@@ -161,8 +250,7 @@ router.get(
    Example:
    GET /api/trains/stations
 
-   This is useful if frontend needs station
-   autocomplete/search.
+   Existing endpoint preserved.
 ===================================================== */
 
 router.get(
@@ -202,11 +290,13 @@ router.use(
       error
     );
 
+
     const status =
       Number(error.status) >= 400 &&
       Number(error.status) < 600
         ? Number(error.status)
         : 500;
+
 
     return res.status(status).json({
 

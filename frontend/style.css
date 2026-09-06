@@ -8,11 +8,16 @@
     margin: 0;
     padding: 0;
 }
-
+#pnrSearchButton {
+    margin-top: 16px;
+}
+#seatAvailabilitySection .search-button {
+    margin-top: 14px;
+}
 :root {
-    --primary: #1769e0;
-    --primary-dark: #1055b7;
-    --primary-light: #eaf2ff;
+    --primary: #3F5F8F;
+    --primary-dark: #304A70;
+    --primary-light: #EEF3F9;
 
     --text: #172033;
     --muted: #71809a;
@@ -119,7 +124,8 @@ body::before {
 
     opacity: 0.36;
 
-    pointer-events: none;
+    pointer-events: auto;
+    cursor: pointer;
 
     z-index: 0;
 
@@ -266,10 +272,9 @@ footer,
     background:
         linear-gradient(
             135deg,
-            #1769e0,
-            #4b8df0
+            #1769e0, 
+            #6685AD
         );
-
     display:
         flex;
 
@@ -347,7 +352,7 @@ footer,
         );
 
     margin:
-        0 auto 60px;
+        0 auto 48px;
 }
 
 
@@ -503,12 +508,18 @@ footer,
 }
 
 .between-form {
+    display: grid;
+
     grid-template-columns:
-        repeat(
-            3,
-            minmax(150px, 1fr)
-        )
-        auto;
+        minmax(0, 1fr)
+        46px
+        minmax(0, 1fr)
+        minmax(180px, 0.65fr)
+        220px;
+
+    gap: 10px;
+
+    align-items: end;
 }
 
 
@@ -604,8 +615,8 @@ footer,
     background:
         linear-gradient(
             135deg,
-            #1769e0,
-            #2577e8
+            #3F5F8F,
+            #496D9F
         );
 
     color: white;
@@ -771,13 +782,13 @@ footer,
 ========================================================= */
 
 .dashboard {
-    margin-top: 26px;
+    margin-top: 24px;
 
     display: flex;
 
     flex-direction: column;
 
-    gap: 18px;
+    gap: 16px;
 }
 
 
@@ -1309,7 +1320,7 @@ footer,
         linear-gradient(
             90deg,
             #1769e0,
-            #4b91f7
+            #6685AD
         );
 
     border-radius: inherit;
@@ -1830,11 +1841,11 @@ footer,
     display: grid;
 
     grid-template-columns:
-        repeat(3, 1fr);
+        repeat(2, minmax(0, 1fr));
 
-    gap: 12px;
+    gap: 10px;
 
-    margin-top: 12px;
+    margin-top: 10px;
 }
 
 .timing-box {
@@ -1846,7 +1857,7 @@ footer,
 
     border-radius: 10px;
 
-    padding: 12px;
+    padding: 10px;
 }
 
 .expected-box {
@@ -1855,6 +1866,10 @@ footer,
 
     border-color:
         #fed7aa;
+}
+/* Hide Expected timing when API data is unavailable */
+.expected-box {
+    display: none;
 }
 
 .actual-box {
@@ -1885,7 +1900,7 @@ footer,
     gap: 10px;
 
     padding:
-        5px 0;
+        4px 0;
 
     font-size: 12px;
 
@@ -2132,45 +2147,50 @@ footer,
    BETWEEN SEARCH RESULTS
 ========================================================= */
 
+/* =========================================================
+   BETWEEN SEARCH RESULTS
+========================================================= */
+
 .section {
-    margin-top: 25px;
+    margin-top: 22px;
 }
 
 .section-title {
-    margin-bottom: 12px;
+    margin-bottom: 14px;
 }
 
 .section-title h2 {
-    font-size: 21px;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text);
 }
 
 .section-title p {
     color: var(--muted);
-
     font-size: 12px;
-
-    margin-top: 4px;
+    margin-top: 5px;
 }
+
+
+/* RESULT LIST */
 
 .train-list {
     display: flex;
-
     flex-direction: column;
-
-    gap: 10px;
+    gap: 12px;
 }
 
+
+/* TRAIN RESULT CARD */
+
 .train-result {
-    background:
-        rgba(255,255,255,0.96);
+    background: rgba(255, 255, 255, 0.97);
 
-    border:
-        1px solid var(--border);
+    border: 1px solid #dfe8f3;
 
-    border-radius: 15px;
+    border-radius: 18px;
 
-    padding:
-        17px 19px;
+    padding: 18px 20px;
 
     display: flex;
 
@@ -2178,102 +2198,237 @@ footer,
 
     justify-content: space-between;
 
-    gap: 20px;
+    gap: 24px;
 
     box-shadow:
-        0 5px 18px
-        rgba(28,55,90,0.04);
+        0 6px 22px rgba(28, 55, 90, 0.05);
 
     transition:
-        all 0.2s ease;
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
 }
+
+
+/* HOVER */
 
 .train-result:hover {
-    border-color: #cbdcf5;
 
-    transform:
-        translateY(-2px);
+    transform: translateY(-2px);
+
+    border-color: #c8d8ed;
 
     box-shadow:
-        0 9px 25px
-        rgba(28,55,90,0.08);
+        0 10px 28px rgba(28, 55, 90, 0.09);
 }
+
+
+/* LEFT CONTENT */
+
+.train-result > div:first-child {
+    min-width: 0;
+    flex: 1;
+}
+
+
+/* TRAIN NAME */
 
 .train-result h3 {
-    font-size: 16px;
 
-    margin-bottom: 4px;
+    margin: 0 0 5px;
+
+    font-size: 19px;
+
+    line-height: 1.25;
+
+    font-weight: 800;
+
+    color: #182238;
 }
 
-.train-result p {
-    color: var(--muted);
 
-    font-size: 11px;
+/* TRAIN NUMBER */
+
+.train-result p {
+
+    margin: 0;
+
+    color: #7b8aa3;
+
+    font-size: 12px;
+
+    font-weight: 600;
 }
 
 .train-result p strong {
-    color: var(--primary);
+
+    color: #496894;
+
+    font-weight: 800;
 }
 
+
+/* META INFORMATION */
+
 .result-meta {
+
     display: flex;
 
     flex-wrap: wrap;
 
-    gap: 8px;
+    gap: 7px;
 
-    margin-top: 10px;
+    margin-top: 12px;
 }
+
+
+/* META PILL */
 
 .result-meta span {
-    background: #f5f8fc;
 
-    border:
-        1px solid #e9edf3;
+    display: inline-flex;
 
-    color: #65738a;
+    align-items: center;
 
-    border-radius: 8px;
+    gap: 4px;
 
-    padding:
-        5px 7px;
+    background: #f4f7fb;
 
-    font-size: 9px;
+    border: 1px solid #e5ebf3;
 
-    font-weight: 700;
-}
-
-.track-button {
-    flex-shrink: 0;
-
-    border: none;
-
-    background:
-        linear-gradient(
-            135deg,
-            #1769e0,
-            #2577e8
-        );
-
-    color: white;
-
-    padding:
-        10px 15px;
+    color: #61718a;
 
     border-radius: 9px;
 
-    font-size: 11px;
+    padding: 6px 9px;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+/* DELAY PILL */
+
+.result-meta span:last-child {
+
+    color: #b45c55;
+
+    background: #fff7f5;
+
+    border-color: #f1ddd8;
+}
+
+
+/* TRACK BUTTON */
+
+.track-button {
+
+    flex-shrink: 0;
+
+    min-width: 142px;
+
+    height: 48px;
+
+    padding: 0 18px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: #4b6795;
+
+    color: #ffffff;
+
+    font-size: 13px;
 
     font-weight: 800;
 
     cursor: pointer;
+
+    box-shadow:
+        0 7px 16px rgba(55, 82, 125, 0.18);
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
-.track-button:hover {
-    background: var(--primary-dark);
 
-    transform:
-        translateY(-1px);
+/* TRACK BUTTON HOVER */
+
+.track-button:hover {
+
+    background: #3f5984;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 9px 20px rgba(55, 82, 125, 0.22);
+}
+
+
+/* TRACK BUTTON CLICK */
+
+.track-button:active {
+
+    transform: translateY(0);
+
+    box-shadow:
+        0 4px 10px rgba(55, 82, 125, 0.15);
+}
+
+
+/* =========================================================
+   MOBILE RESULT CARDS
+========================================================= */
+
+@media (max-width: 760px) {
+
+    .train-result {
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: 14px;
+
+        padding: 16px;
+    }
+
+
+    .train-result h3 {
+
+        font-size: 17px;
+    }
+
+
+    .result-meta {
+
+        gap: 6px;
+
+        margin-top: 10px;
+    }
+
+
+    .result-meta span {
+
+        font-size: 9px;
+
+        padding: 5px 8px;
+    }
+
+
+    .track-button {
+
+        width: 100%;
+
+        height: 44px;
+    }
+
 }
 
 
@@ -2499,6 +2654,37 @@ footer {
         grid-template-columns: 1fr;
     }
 
+        .swap-stations-button {
+        width: 44px;
+        height: 44px;
+
+        justify-self: center;
+
+        align-self: center;
+
+        margin: -2px 0;
+    }
+
+    /* Swap animation */
+
+.swap-stations-button.swap-animate {
+    animation: swapRotate 0.45s ease;
+}
+
+@keyframes swapRotate {
+    0% {
+        transform: rotate(0deg) scale(1);
+    }
+
+    50% {
+        transform: rotate(180deg) scale(1.08);
+    }
+
+    100% {
+        transform: rotate(360deg) scale(1);
+    }
+}
+
     .search-button {
         width: 100%;
     }
@@ -2681,4 +2867,3235 @@ footer {
     .eta-main strong {
         font-size: 23px;
     }
+}
+
+/* =========================================================
+   PNR RESULT - PREMIUM UI
+========================================================= */
+
+#pnrResult {
+    width: 100%;
+    margin-top: 28px;
+}
+
+
+/* =========================================================
+   PNR RESULT HEADER
+========================================================= */
+
+.pnr-result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+
+    padding: 24px 26px;
+
+    margin-bottom: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffffff,
+            #f5f8ff
+        );
+
+    border: 1px solid #e4eaf5;
+
+    border-radius: 22px;
+
+    box-shadow:
+        0 12px 35px
+        rgba(35, 65, 120, 0.08);
+}
+
+
+.pnr-result-header span {
+    display: block;
+
+    margin-bottom: 7px;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.2px;
+
+    color: #71809a;
+}
+
+
+.pnr-result-header strong {
+    display: block;
+
+    font-size: 25px;
+
+    letter-spacing: 1px;
+
+    color: #17213a;
+}
+
+
+/* =========================================================
+   CHART STATUS
+========================================================= */
+
+.pnr-status-pill {
+    padding: 9px 15px;
+
+    border-radius: 999px;
+
+    background: #edf8f1;
+
+    color: #29945b;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: .7px;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   RESULT CARD
+========================================================= */
+
+.pnr-result-card {
+    padding: 25px 26px;
+
+    margin-bottom: 18px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5eaf2;
+
+    border-radius: 22px;
+
+    box-shadow:
+        0 10px 30px
+        rgba(35, 65, 120, 0.07);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+
+.pnr-result-card:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 16px 38px
+        rgba(35, 65, 120, 0.10);
+}
+
+
+/* =========================================================
+   CARD TITLE
+========================================================= */
+
+.pnr-result-card h3 {
+    margin: 0 0 22px;
+
+    font-size: 18px;
+
+    font-weight: 800;
+
+    color: #17213a;
+}
+
+
+/* =========================================================
+   INFO GRID
+========================================================= */
+
+.pnr-info-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 16px;
+}
+
+
+.pnr-info-grid > div {
+    padding: 16px 17px;
+
+    background: #f7f9fc;
+
+    border: 1px solid #edf0f5;
+
+    border-radius: 14px;
+}
+
+
+.pnr-info-grid span,
+.pnr-passenger-grid span {
+    display: block;
+
+    margin-bottom: 7px;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+
+    color: #7b879d;
+}
+
+
+.pnr-info-grid strong {
+    display: block;
+
+    font-size: 14px;
+
+    line-height: 1.4;
+
+    color: #202b42;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   PASSENGER
+========================================================= */
+
+.pnr-passengers {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 14px;
+}
+
+
+.pnr-passenger {
+    padding: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8faff,
+            #ffffff
+        );
+
+    border: 1px solid #e5eaf2;
+
+    border-radius: 17px;
+}
+
+
+.pnr-passenger-title {
+    margin-bottom: 15px;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    color: #27334b;
+}
+
+
+.pnr-passenger-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 12px;
+}
+
+
+.pnr-passenger-grid > div {
+    padding: 13px;
+
+    background: #ffffff;
+
+    border: 1px solid #edf0f5;
+
+    border-radius: 12px;
+}
+
+
+.pnr-passenger-grid strong {
+    display: block;
+
+    font-size: 13px;
+
+    line-height: 1.35;
+
+    color: #27334b;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   STATUS BADGES
+========================================================= */
+
+.pnr-status-badge {
+    display: inline-flex !important;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: fit-content;
+
+    min-height: 28px;
+
+    padding: 5px 10px;
+
+    border-radius: 999px;
+
+    font-size: 11px !important;
+
+    font-weight: 800 !important;
+
+    letter-spacing: .3px;
+}
+
+
+/* CONFIRMED */
+
+.pnr-status-badge.confirmed {
+    background: #e9f8ef;
+
+    color: #20864f;
+}
+
+
+/* RAC */
+
+.pnr-status-badge.rac {
+    background: #fff4df;
+
+    color: #a56a00;
+}
+
+
+/* WAITING LIST */
+
+.pnr-status-badge.waiting {
+    background: #fff0f0;
+
+    color: #c43b3b;
+}
+
+
+/* CANCELLED */
+
+.pnr-status-badge.cancelled {
+    background: #f1e9ed;
+
+    color: #8e354d;
+}
+
+
+/* UNKNOWN */
+
+.pnr-status-badge.unknown {
+    background: #edf1f6;
+
+    color: #66738a;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.pnr-empty {
+    padding: 24px;
+
+    text-align: center;
+
+    border-radius: 14px;
+
+    background: #f7f9fc;
+
+    color: #71809a;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .pnr-result-header {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        padding: 20px;
+    }
+
+
+    .pnr-result-card {
+        padding: 20px;
+    }
+
+
+    .pnr-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .pnr-passenger-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .pnr-result-header strong {
+        font-size: 21px;
+    }
+
+
+    .pnr-passenger-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .pnr-result-card h3 {
+        font-size: 16px;
+    }
+
+}
+/* =========================================================
+   COACH POSITION
+========================================================= */
+
+.coach-position-section {
+    margin-top: 24px;
+}
+
+.coach-section-label {
+    display: inline-block;
+    margin-bottom: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    opacity: 0.65;
+}
+
+.coach-platform {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 16px;
+    padding: 9px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.coach-formation-wrapper {
+    margin-top: 22px;
+}
+
+.coach-formation-title {
+    margin-bottom: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.coach-formation {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 8px 4px 14px;
+}
+
+.coach-formation::-webkit-scrollbar {
+    height: 8px;
+}
+
+.coach-formation::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.coach-formation::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.coach-card {
+    position: relative;
+    flex: 0 0 92px;
+    min-height: 82px;
+    padding: 10px 8px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.045);
+    color: inherit;
+    cursor: pointer;
+    text-align: center;
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+.coach-card:hover {
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.coach-card.active {
+    border-color: currentColor;
+    background: rgba(255, 255, 255, 0.10);
+}
+
+.coach-position {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 10px;
+    opacity: 0.55;
+}
+
+.coach-card strong {
+    display: block;
+    font-size: 17px;
+    line-height: 1.2;
+}
+
+.coach-class {
+    display: block;
+    margin-top: 6px;
+    font-size: 10px;
+    opacity: 0.65;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.coach-details {
+    margin-top: 18px;
+}
+
+.coach-detail-card {
+    padding: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.coach-detail-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.coach-detail-header span,
+.coach-detail-grid span {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    opacity: 0.55;
+}
+
+.coach-detail-header strong {
+    font-size: 20px;
+}
+
+.coach-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(130px, 1fr)
+    );
+    gap: 14px;
+}
+
+.coach-detail-grid > div {
+    padding: 12px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.coach-detail-grid strong {
+    font-size: 13px;
+}
+
+@media (max-width: 600px) {
+
+    .coach-formation {
+        gap: 8px;
+    }
+
+    .coach-card {
+        flex-basis: 78px;
+        min-height: 76px;
+    }
+
+    .coach-detail-card {
+        padding: 14px;
+    }
+
+    .coach-detail-header {
+        gap: 12px;
+    }
+
+}
+
+/* =========================================================
+   COACH SEAT / BERTH LAYOUT
+========================================================= */
+
+.coach-layout-section {
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.coach-layout-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 18px;
+}
+
+.coach-layout-header span {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    opacity: 0.55;
+}
+
+.coach-layout-header h3 {
+    margin: 0;
+    font-size: 17px;
+}
+
+.coach-layout-count {
+    padding: 8px 12px;
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 700;
+    background: rgba(0, 0, 0, 0.045);
+    white-space: nowrap;
+}
+
+.coach-cabins {
+    display: grid;
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(240px, 1fr)
+        );
+    gap: 14px;
+}
+
+.coach-cabin {
+    padding: 14px;
+    border: 1px solid rgba(0, 0, 0, 0.09);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.55);
+}
+
+.coach-cabin-title {
+    margin-bottom: 12px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    opacity: 0.6;
+}
+
+.berth-area {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+}
+
+.main-berths {
+    flex: 1;
+    display: grid;
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(45px, 1fr)
+        );
+    gap: 6px;
+}
+
+.side-berths {
+    width: 58px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-left: 8px;
+    border-left: 1px dashed rgba(0, 0, 0, 0.14);
+}
+
+.berth-item {
+    min-height: 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.025);
+}
+
+.berth-number {
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.berth-type {
+    margin-top: 3px;
+    font-size: 9px;
+    font-weight: 700;
+    opacity: 0.55;
+}
+
+.side-berth {
+    min-height: 48px;
+}
+
+@media (max-width: 700px) {
+
+    .coach-layout-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .coach-cabins {
+        grid-template-columns: 1fr;
+    }
+
+}
+/* =========================================================
+   2S COACH INFORMATION
+========================================================= */
+
+.coach-2s-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    margin-top: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.025);
+}
+
+.coach-2s-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.05);
+    font-size: 24px;
+}
+
+.coach-2s-info strong {
+    display: block;
+    font-size: 15px;
+}
+
+.coach-2s-info p {
+    margin: 5px 0 0;
+    font-size: 12px;
+    line-height: 1.5;
+    opacity: 0.6;
+}
+/* =========================================================
+   2S GRAPHICAL SEAT MAP
+========================================================= */
+
+.coach-2s-layout {
+    margin-top: 24px;
+}
+
+
+.coach-2s-map {
+    position: relative;
+
+    width: 100%;
+
+    max-width: 760px;
+
+    margin:
+        24px auto
+        0;
+
+    padding:
+        28px 26px 34px;
+
+    background:
+        #ffffff;
+
+    border:
+        1px solid #dfe5ec;
+
+    border-radius:
+        22px;
+
+    box-shadow:
+        0 10px 35px
+        rgba(
+            15,
+            23,
+            42,
+            0.07
+        );
+
+    overflow:
+        hidden;
+}
+
+
+/* =========================================================
+   COACH DESCRIPTION
+========================================================= */
+
+.coach-2s-label {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        4px;
+
+    width:
+        180px;
+
+    margin-bottom:
+        20px;
+
+    font-size:
+        13px;
+
+    color:
+        #6b7280;
+}
+
+
+.coach-2s-label strong {
+
+    font-size:
+        20px;
+
+    color:
+        #172033;
+}
+
+
+.coach-2s-label span {
+
+    font-size:
+        12px;
+
+    font-weight:
+        700;
+}
+
+
+/* =========================================================
+   TOILETS
+========================================================= */
+
+.coach-2s-front {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap:
+        70px;
+
+    max-width:
+        350px;
+
+    margin:
+        0 auto 10px;
+
+}
+
+
+.coach-2s-toilet {
+
+    height:
+        68px;
+
+    border:
+        3px solid #20242b;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    font-size:
+        13px;
+
+    font-weight:
+        800;
+
+    background:
+        #ffffff;
+}
+
+
+/* =========================================================
+   ENTRY / EXIT
+========================================================= */
+
+.coach-2s-entry {
+
+    text-align:
+        center;
+
+    margin-bottom:
+        20px;
+}
+
+
+.coach-2s-entry > span,
+.coach-2s-end > span {
+
+    display:
+        block;
+
+    margin-bottom:
+        10px;
+
+    font-size:
+        10px;
+
+    font-weight:
+        800;
+
+    color:
+        #687385;
+
+    letter-spacing:
+        .5px;
+}
+
+
+/* =========================================================
+   FRONT SEATS
+========================================================= */
+
+.coach-2s-front-seats {
+
+    display:
+        flex;
+
+    justify-content:
+        center;
+
+    gap:
+        5px;
+}
+
+
+/* =========================================================
+   BAY
+========================================================= */
+
+.coach-2s-bays {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        20px;
+
+    max-width:
+        520px;
+
+    margin:
+        0 auto;
+}
+
+
+.coach-2s-bay {
+
+    padding:
+        10px 0;
+
+    border-bottom:
+        1px dashed #cbd5e1;
+}
+
+
+.coach-2s-row {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1fr 70px 1fr;
+
+    align-items:
+        center;
+
+    min-height:
+        54px;
+}
+
+
+.coach-2s-seat-group {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap:
+        5px;
+
+    justify-items:
+        center;
+}
+
+
+.coach-2s-aisle {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    min-height:
+        42px;
+}
+
+
+/* =========================================================
+   SEAT
+========================================================= */
+
+.coach-2s-seat {
+
+    position:
+        relative;
+
+    width:
+        48px;
+
+    height:
+        42px;
+
+    border:
+        1px solid #b8c1cc;
+
+    border-radius:
+        3px;
+
+    background:
+        #ffffff;
+
+    cursor:
+        pointer;
+
+    font-family:
+        inherit;
+
+    font-size:
+        13px;
+
+    font-weight:
+        800;
+
+    color:
+        #202733;
+
+    transition:
+        transform .15s ease,
+        box-shadow .15s ease;
+}
+
+
+.coach-2s-seat:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 5px 12px
+        rgba(
+            15,
+            23,
+            42,
+            0.15
+        );
+
+    z-index:
+        3;
+}
+
+
+/* =========================================================
+   SEAT TYPES
+========================================================= */
+
+.coach-2s-window {
+
+    background:
+        #fff8c7;
+
+    border-color:
+        #d8c95e;
+}
+
+
+.coach-2s-middle {
+
+    background:
+        #f7e8e8;
+
+    border-color:
+        #d8bcbc;
+}
+
+
+.coach-2s-aisle {
+
+    background:
+        transparent;
+}
+
+
+/* =========================================================
+   END OF COACH
+========================================================= */
+
+.coach-2s-end {
+
+    margin-top:
+        20px;
+
+    text-align:
+        center;
+}
+
+
+.coach-2s-end-seats {
+
+    display:
+        flex;
+
+    justify-content:
+        center;
+
+    gap:
+        5px;
+
+    flex-wrap:
+        wrap;
+}
+
+
+/* =========================================================
+   LEGEND
+========================================================= */
+
+.coach-2s-legend {
+
+    display:
+        flex;
+
+    justify-content:
+        center;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        18px;
+
+    margin-top:
+        22px;
+
+    padding-top:
+        16px;
+
+    border-top:
+        1px solid #e5e7eb;
+
+    font-size:
+        12px;
+
+    font-weight:
+        700;
+
+    color:
+        #697386;
+}
+
+
+.coach-2s-legend > div {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        6px;
+}
+
+
+.legend-box {
+
+    width:
+        14px;
+
+    height:
+        14px;
+
+    border:
+        1px solid #b8c1cc;
+
+    border-radius:
+        3px;
+
+    display:
+        inline-block;
+}
+
+
+.legend-box.window {
+
+    background:
+        #fff8c7;
+}
+
+
+.legend-box.middle {
+
+    background:
+        #f7e8e8;
+}
+
+
+.legend-box.aisle {
+
+    background:
+        #ffffff;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (
+    max-width: 700px
+) {
+
+    .coach-2s-map {
+
+        padding:
+            20px 12px 25px;
+
+        overflow-x:
+            auto;
+    }
+
+
+    .coach-2s-row {
+
+        grid-template-columns:
+            1fr 42px 1fr;
+    }
+
+
+    .coach-2s-seat {
+
+        width:
+            40px;
+
+        height:
+            38px;
+
+        font-size:
+            11px;
+    }
+
+
+    .coach-2s-front {
+
+        gap:
+            20px;
+    }
+
+
+    .coach-2s-bays {
+
+        min-width:
+            460px;
+    }
+
+}
+/* =========================================================
+   FIX 2S SEAT / AISLE CLASS CONFLICT
+========================================================= */
+
+/* Actual aisle */
+.coach-2s-row > .coach-2s-aisle {
+    width: 100%;
+    height: 100%;
+    min-height: 42px;
+
+    background: transparent;
+
+    border: none;
+
+    padding: 0;
+}
+
+
+/* Actual seats */
+.coach-2s-seat {
+    width: 48px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    background: #ffffff;
+
+    border:
+        1px solid #b8c1cc;
+
+    border-radius: 3px;
+
+    color: #202733;
+
+    font-size: 13px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-sizing: border-box;
+}
+
+
+/* Window seat */
+.coach-2s-seat.coach-2s-window {
+    background: #fff8c7;
+
+    border-color: #d8c95e;
+}
+
+
+/* Middle seat */
+.coach-2s-seat.coach-2s-middle {
+    background: #f7e8e8;
+
+    border-color: #d8bcbc;
+}
+
+
+/* Aisle seat */
+.coach-2s-seat.coach-2s-aisle {
+    width: 48px;
+    height: 42px;
+
+    background: #ffffff;
+
+    border:
+        1px solid #b8c1cc;
+}
+
+
+/* Mobile */
+@media (max-width: 700px) {
+
+    .coach-2s-seat {
+        width: 40px;
+        height: 38px;
+
+        font-size: 11px;
+    }
+
+    .coach-2s-seat.coach-2s-aisle {
+        width: 40px;
+        height: 38px;
+    }
+
+}
+/* =========================================================
+   SEAT AVAILABILITY - PROFESSIONAL UI
+========================================================= */
+
+.seat-availability-section {
+    width: 100%;
+    margin-top: 0;
+}
+
+
+.seat-availability-section .panel {
+    width: 100%;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.seat-availability-form {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 18px;
+
+    margin-top: 24px;
+}
+
+
+.seat-availability-form .field {
+    min-width: 0;
+}
+
+
+.seat-availability-form .search-button {
+    width: fit-content;
+    min-width: 220px;
+    align-self: end;
+}
+
+
+/* =========================================================
+   INPUTS
+========================================================= */
+
+.seat-availability-form input,
+.seat-availability-form select {
+    width: 100%;
+    min-height: 56px;
+
+    padding: 0 16px;
+
+    border: 1px solid #dce3ee;
+    border-radius: 14px;
+
+    background: #ffffff;
+
+    color: #182238;
+
+    font-size: 16px;
+    font-weight: 500;
+
+    outline: none;
+
+    box-sizing: border-box;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.seat-availability-form input:focus,
+.seat-availability-form select:focus {
+    border-color: #1769e0;
+
+    box-shadow:
+        0 0 0 4px rgba(23, 105, 224, 0.10);
+}
+
+
+.seat-availability-form input::placeholder {
+    color: #9ba8bd;
+}
+
+
+/* =========================================================
+   SELECT
+========================================================= */
+
+.seat-availability-form select {
+    cursor: pointer;
+
+    appearance: auto;
+}
+
+
+/* =========================================================
+   RESULT CARD
+========================================================= */
+
+.seat-availability-result {
+    margin-top: 28px;
+}
+
+
+.seat-availability-card {
+    width: 100%;
+
+    overflow: hidden;
+
+    border: 1px solid #e1e7f0;
+    border-radius: 18px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 12px 35px rgba(31, 48, 78, 0.08);
+}
+
+
+/* =========================================================
+   RESULT HEADER
+========================================================= */
+
+.seat-result-header {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 24px;
+
+    padding: 24px 26px;
+
+    border-bottom: 1px solid #e8edf4;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f7faff 0%,
+            #ffffff 100%
+        );
+}
+
+
+.seat-result-header > div:first-child {
+    min-width: 0;
+}
+
+
+.seat-result-header span:first-child {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #1769e0;
+
+    font-size: 12px;
+    font-weight: 800;
+
+    letter-spacing: 1.4px;
+}
+
+
+.seat-result-header h3 {
+    margin: 0;
+
+    color: #172033;
+
+    font-size: 22px;
+    font-weight: 800;
+
+    line-height: 1.3;
+}
+
+
+.seat-result-header p {
+    margin: 7px 0 0;
+
+    color: #71809a;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   CLASS + QUOTA BADGES
+========================================================= */
+
+.seat-result-meta {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    flex-shrink: 0;
+}
+
+
+.seat-result-meta strong,
+.seat-result-meta span {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 54px;
+
+    min-height: 36px;
+
+    padding: 0 12px;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+    font-weight: 800;
+}
+
+
+.seat-result-meta strong {
+    background: #1769e0;
+    color: #ffffff;
+}
+
+
+.seat-result-meta span {
+    background: #eef3fb;
+    color: #53627a;
+}
+
+
+/* =========================================================
+   AVAILABILITY LIST
+========================================================= */
+
+.seat-availability-list {
+    width: 100%;
+}
+
+
+/* =========================================================
+   EACH DATE ROW
+========================================================= */
+
+.seat-availability-row {
+    display: grid;
+
+    grid-template-columns:
+        minmax(150px, 0.8fr)
+        minmax(240px, 1.2fr);
+
+    align-items: center;
+
+    min-height: 64px;
+
+    padding: 0 26px;
+
+    border-bottom: 1px solid #edf1f6;
+
+    transition:
+        background 0.2s ease;
+}
+
+
+.seat-availability-row:last-child {
+    border-bottom: none;
+}
+
+
+.seat-availability-row:hover {
+    background: #f8fbff;
+}
+
+
+/* =========================================================
+   DATE
+========================================================= */
+
+.seat-date {
+    color: #253149;
+
+    font-size: 15px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.seat-status {
+    justify-self: start;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    min-height: 34px;
+
+    padding: 0 13px;
+
+    border-radius: 9px;
+
+    font-size: 13px;
+    font-weight: 800;
+
+    letter-spacing: 0.1px;
+}
+
+
+/* =========================================================
+   AVAILABLE
+========================================================= */
+
+.seat-status-available {
+    background: #e9f8ef;
+    color: #168447;
+}
+
+
+.seat-status-available::before {
+    content: "●";
+
+    margin-right: 7px;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   RAC
+========================================================= */
+
+.seat-status-rac {
+    background: #fff5dc;
+    color: #a66a00;
+}
+
+
+.seat-status-rac::before {
+    content: "●";
+
+    margin-right: 7px;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   WAITING LIST
+========================================================= */
+
+.seat-status-wl {
+    background: #fff0f0;
+    color: #c53b3b;
+}
+
+
+.seat-status-wl::before {
+    content: "●";
+
+    margin-right: 7px;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   UNKNOWN
+========================================================= */
+
+.seat-status-unknown {
+    background: #eef1f5;
+    color: #667085;
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.seat-availability-loading {
+    margin-top: 18px;
+
+    padding: 15px 18px;
+
+    border: 1px solid #dce7f8;
+    border-radius: 12px;
+
+    background: #f4f8ff;
+
+    color: #1769e0;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   BUTTON DISABLED
+========================================================= */
+
+.seat-availability-form
+.search-button:disabled {
+    opacity: 0.65;
+
+    cursor: wait;
+
+    transform: none;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 800px) {
+
+    .seat-availability-form {
+        grid-template-columns: 1fr;
+    }
+
+
+    .seat-availability-form
+    .search-button {
+        width: 100%;
+    }
+
+
+    .seat-result-header {
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+
+    .seat-result-meta {
+        width: 100%;
+    }
+
+
+    .seat-availability-row {
+        grid-template-columns: 1fr;
+
+        gap: 8px;
+
+        padding: 15px 18px;
+
+        min-height: auto;
+    }
+
+
+    .seat-status {
+        justify-self: start;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .seat-result-header {
+        padding: 20px 18px;
+    }
+
+
+    .seat-result-header h3 {
+        font-size: 18px;
+    }
+
+
+    .seat-result-header p {
+        font-size: 13px;
+    }
+
+
+    .seat-result-meta strong,
+    .seat-result-meta span {
+        min-height: 32px;
+
+        font-size: 12px;
+    }
+
+
+    .seat-date {
+        font-size: 14px;
+    }
+
+
+    .seat-status {
+        font-size: 12px;
+    }
+
+}
+/* =========================================
+   SEAT AVAILABILITY RESULT
+========================================= */
+
+#seatAvailabilityResult {
+    margin-top: 28px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+/* =========================================
+   RESULT CARD
+========================================= */
+
+.seat-availability-card {
+    background: #ffffff;
+    border: 1px solid #e1e7f0;
+    border-radius: 22px;
+    padding: 28px;
+    box-sizing: border-box;
+    box-shadow: 0 12px 30px rgba(35, 55, 90, 0.08);
+    overflow: hidden;
+}
+
+
+/* =========================================
+   RESULT HEADER
+========================================= */
+
+.seat-result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 24px;
+
+    padding-bottom: 22px;
+
+    border-bottom: 1px solid #e8edf4;
+
+    flex-wrap: wrap;
+}
+
+
+.seat-result-header > div:first-child span {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #3568d4;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+}
+
+
+.seat-result-header h3 {
+    margin: 0;
+
+    color: #202b42;
+
+    font-size: 26px;
+
+    font-weight: 800;
+
+    line-height: 1.25;
+}
+
+
+/* =========================================
+   ROUTE / CLASS / QUOTA
+========================================= */
+
+.seat-result-meta {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    flex-wrap: wrap;
+}
+
+
+.seat-result-meta strong,
+.seat-result-meta span {
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 38px;
+
+    padding: 0 15px;
+
+    border-radius: 11px;
+
+    background: #f1f5fb;
+
+    color: #33415c;
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================
+   AVAILABILITY LIST
+
+   IMPORTANT:
+   JS uses .seat-availability-row
+========================================= */
+
+.seat-availability-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    width: 100%;
+
+    margin: 0;
+
+    padding: 0;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================
+   AVAILABILITY ROW
+========================================= */
+
+.seat-availability-row {
+
+    width: 100%;
+
+    min-width: 0;
+
+    min-height: 76px;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(150px, 1fr)
+        minmax(180px, auto);
+
+    align-items: center;
+
+    gap: 24px;
+
+    padding: 16px 8px;
+
+    box-sizing: border-box;
+
+    border-bottom: 1px solid #e7ecf3;
+}
+
+
+.seat-availability-row:last-child {
+
+    border-bottom: none;
+
+}
+
+
+/* =========================================
+   DATE
+========================================= */
+
+.seat-date {
+
+    min-width: 0;
+
+    display: flex;
+
+    align-items: center;
+}
+
+
+.seat-date strong {
+
+    display: block;
+
+    color: #253149;
+
+    font-size: 17px;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================
+   STATUS
+========================================= */
+
+.seat-status {
+
+    width: auto;
+
+    min-width: 180px;
+
+    min-height: 42px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 0 18px;
+
+    box-sizing: border-box;
+
+    border-radius: 12px;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    text-align: center;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================
+   AVAILABLE
+========================================= */
+
+.seat-status-available {
+
+    background: #e8f8ee;
+
+    color: #3d8750;
+
+}
+
+
+/* =========================================
+   RAC
+========================================= */
+
+.seat-status-rac {
+
+    background: #fff4d9;
+
+    color: #a96b00;
+
+}
+
+
+/* =========================================
+   WAITING LIST
+========================================= */
+
+.seat-status-wl {
+
+    background: #ffe9e9;
+
+    color: #c53b3b;
+
+}
+
+
+/* =========================================
+   UNKNOWN
+========================================= */
+
+.seat-status-unknown {
+
+    background: #edf2ff;
+
+    color: #4265b5;
+
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 700px) {
+
+    .seat-availability-card {
+
+        padding: 20px;
+
+        border-radius: 18px;
+
+    }
+
+
+    .seat-result-header {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 14px;
+
+    }
+
+
+    .seat-result-header h3 {
+
+        font-size: 21px;
+
+    }
+
+
+    .seat-result-meta {
+
+        width: 100%;
+
+    }
+
+
+    .seat-result-meta strong,
+    .seat-result-meta span {
+
+        font-size: 12px;
+
+        min-height: 34px;
+
+    }
+
+
+    .seat-availability-row {
+
+        grid-template-columns: 1fr;
+
+        gap: 10px;
+
+        min-height: auto;
+
+        padding: 16px 4px;
+
+    }
+
+
+    .seat-date strong {
+
+        font-size: 16px;
+
+    }
+
+
+    .seat-status {
+
+        width: 100%;
+
+        min-width: 0;
+
+        min-height: 40px;
+
+        font-size: 13px;
+
+    }
+
+}
+/* =========================================================
+   FINAL FIX - SEAT JOURNEY DATE
+========================================================= */
+
+#seatJourneyDate {
+    width: 100%;
+    height: 52px;
+    padding: 0 16px;
+
+    background: #ffffff;
+    color: #26324a;
+
+    border: 1px solid #dbe3f0;
+    border-radius: 16px;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    box-sizing: border-box;
+    cursor: pointer;
+    outline: none;
+
+    appearance: auto !important;
+    -webkit-appearance: auto !important;
+    -moz-appearance: auto !important;
+
+    color-scheme: light;
+}
+
+
+/* ONLY ONE native calendar icon */
+
+#seatJourneyDate::-webkit-calendar-picker-indicator {
+    display: block !important;
+    visibility: visible !important;
+
+    width: 22px;
+    height: 22px;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    opacity: 0.75 !important;
+
+    cursor: pointer;
+}
+
+
+/* Date text */
+
+#seatJourneyDate::-webkit-datetime-edit {
+    color: #26324a;
+}
+
+#seatJourneyDate::-webkit-datetime-edit-fields-wrapper {
+    padding: 0;
+}
+
+
+/* Focus */
+
+#seatJourneyDate:focus {
+    border-color: #3568d4;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(53, 104, 212, 0.12);
+}
+
+
+/* Hover */
+
+#seatJourneyDate:hover {
+    border-color: #3568d4;
+}
+
+/* =========================================================
+   FINAL FIX - SEAT AVAILABILITY SELECT BOX
+========================================================= */
+
+#seatAvailabilitySection select,
+#seatClass,
+#seatQuota {
+    width: 100% !important;
+    height: 52px !important;
+
+    padding: 0 52px 0 16px !important;
+
+    background-color: #ffffff !important;
+    background-image:
+        linear-gradient(
+            45deg,
+            transparent 50%,
+            #64748b 50%
+        ),
+        linear-gradient(
+            135deg,
+            #64748b 50%,
+            transparent 50%
+        ) !important;
+
+    background-position:
+        calc(100% - 21px) 22px,
+        calc(100% - 15px) 22px !important;
+
+    background-size:
+        6px 6px,
+        6px 6px !important;
+
+    background-repeat: no-repeat !important;
+
+    color: #26324a !important;
+
+    border: 1px solid #dbe3f0 !important;
+    border-radius: 16px !important;
+
+    font-size: 16px !important;
+    font-weight: 700 !important;
+
+    outline: none !important;
+
+    cursor: pointer !important;
+
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+
+    box-shadow: none !important;
+
+    box-sizing: border-box !important;
+}
+
+
+/* Hover */
+
+#seatAvailabilitySection select:hover,
+#seatClass:hover,
+#seatQuota:hover {
+
+    border-color: #3568d4 !important;
+
+}
+
+
+/* Focus */
+
+#seatAvailabilitySection select:focus,
+#seatClass:focus,
+#seatQuota:focus {
+
+    border-color: #3568d4 !important;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(53, 104, 212, 0.12) !important;
+
+}
+
+
+/* Dropdown options */
+
+#seatAvailabilitySection select option,
+#seatClass option,
+#seatQuota option {
+
+    background: #ffffff !important;
+
+    color: #26324a !important;
+
+    font-size: 15px !important;
+
+    font-weight: 600 !important;
+
+}
+
+
+/* Mobile */
+
+@media (max-width: 700px) {
+
+    #seatAvailabilitySection select,
+    #seatClass,
+    #seatQuota {
+
+        height: 50px !important;
+
+        font-size: 15px !important;
+
+        border-radius: 14px !important;
+
+    }
+
+}
+
+/* =========================================================
+   RAILTRACK AI ASSISTANT
+========================================================= */
+
+.ai-assistant {
+
+    position: fixed;
+
+    right: 24px;
+    bottom: 55px;
+
+    z-index: 99999;
+
+    font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+
+/* =========================================================
+   FLOATING AI BUTTON
+========================================================= */
+
+.ai-assistant-button {
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    height: 50px;
+
+    padding: 0 16px;
+
+    border: none;
+
+    border-radius: 17px;
+
+    background: #3F5F8F;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 10px 28px
+        rgba(23, 105, 224, 0.28);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.ai-assistant-button:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 14px 34px
+        rgba(23, 105, 224, 0.34);
+}
+
+
+.ai-assistant-icon {
+
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 21px;
+}
+
+
+/* =========================================================
+   CHAT WINDOW
+========================================================= */
+
+.ai-chat-window {
+
+    position: absolute;
+
+    right: 0;
+    bottom: 68px;
+
+    width: 380px;
+    height: 520px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    overflow: hidden;
+
+    background: #ffffff;
+
+    border:
+        1px solid #dfe6f0;
+
+    border-radius: 22px;
+
+    box-shadow:
+        0 22px 60px
+        rgba(24, 45, 78, 0.22);
+}
+
+
+.ai-chat-window.hidden {
+
+    display: none;
+
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.ai-chat-header {
+
+    min-height: 72px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 16px;
+
+    background: #1769e0;
+
+    color: #ffffff;
+}
+
+
+.ai-chat-title {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+}
+
+
+.ai-chat-avatar {
+
+    width: 43px;
+    height: 43px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #ffffff;
+
+    border-radius: 13px;
+
+    font-size: 23px;
+}
+
+
+.ai-chat-title strong {
+
+    display: block;
+
+    font-size: 16px;
+
+    font-weight: 800;
+}
+
+
+.ai-chat-title span {
+
+    display: block;
+
+    margin-top: 3px;
+
+    font-size: 11px;
+
+    opacity: 0.86;
+}
+
+
+.ai-chat-close {
+
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: transparent;
+
+    color: #ffffff;
+
+    font-size: 28px;
+
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+
+.ai-chat-close:hover {
+
+    background:
+        rgba(255, 255, 255, 0.15);
+
+}
+
+
+/* =========================================================
+   MESSAGES
+========================================================= */
+
+.ai-chat-messages {
+
+    flex: 1;
+
+    overflow-y: auto;
+
+    padding: 18px;
+
+    background: #f7faff;
+}
+
+
+.ai-message {
+
+    display: flex;
+
+    margin-bottom: 13px;
+
+}
+
+
+.ai-message-bot {
+
+    justify-content: flex-start;
+
+}
+
+
+.ai-message-user {
+
+    justify-content: flex-end;
+
+}
+
+
+.ai-message-bubble {
+
+    max-width: 82%;
+
+    padding: 12px 14px;
+
+    border-radius: 15px;
+
+    background: #ffffff;
+
+    border:
+        1px solid #e1e7f0;
+
+    color: #26324a;
+
+    font-size: 13px;
+
+    line-height: 1.55;
+
+    box-shadow:
+        0 3px 10px
+        rgba(35, 55, 90, 0.04);
+}
+
+
+.ai-message-user
+.ai-message-bubble {
+
+    background: #1769e0;
+
+    color: #ffffff;
+
+    border-color: #1769e0;
+
+}
+
+
+/* =========================================================
+   QUICK QUESTIONS
+========================================================= */
+
+.ai-quick-questions {
+
+    display: flex;
+
+    gap: 7px;
+
+    overflow-x: auto;
+
+    padding: 10px 12px;
+
+    background: #ffffff;
+
+    border-top:
+        1px solid #edf1f6;
+
+    scrollbar-width: thin;
+}
+
+
+.ai-quick-question {
+
+    flex-shrink: 0;
+
+    padding: 8px 11px;
+
+    border:
+        1px solid #dbe3f0;
+
+    border-radius: 10px;
+
+    background: #f8faff;
+
+    color: #3568d4;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+}
+
+
+.ai-quick-question:hover {
+
+    background: #edf3ff;
+
+    border-color: #cbdaf4;
+
+}
+
+
+/* =========================================================
+   CHAT FORM
+========================================================= */
+
+.ai-chat-form {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 12px;
+
+    background: #ffffff;
+
+    border-top:
+        1px solid #edf1f6;
+}
+
+
+.ai-chat-form input {
+
+    flex: 1;
+
+    min-width: 0;
+
+    height: 44px;
+
+    padding: 0 14px;
+
+    border:
+        1px solid #dbe3f0;
+
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    color: #26324a;
+
+    font-size: 13px;
+
+    outline: none;
+
+    box-sizing: border-box;
+}
+
+
+.ai-chat-form input::placeholder {
+
+    color: #94a0b4;
+
+}
+
+
+.ai-chat-form input:focus {
+
+    border-color: #3568d4;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(53, 104, 212, 0.10);
+}
+
+
+.ai-chat-form button {
+
+    width: 44px;
+    height: 44px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: #1769e0;
+
+    color: #ffffff;
+
+    font-size: 18px;
+
+    cursor: pointer;
+}
+
+
+.ai-chat-form button:hover {
+
+    background: #1055b7;
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .ai-assistant {
+
+        right: 14px;
+
+        bottom: 14px;
+
+    }
+
+
+    .ai-assistant-button {
+
+        width: 54px;
+        height: 54px;
+
+        padding: 0;
+
+        border-radius: 50%;
+
+    }
+
+
+    .ai-assistant-button-text {
+
+        display: none;
+
+    }
+
+
+    .ai-chat-window {
+
+        right: 0;
+
+        bottom: 66px;
+
+        width:
+            calc(100vw - 28px);
+
+        max-width: 380px;
+
+        height: 500px;
+
+        border-radius: 20px;
+
+    }
+
+}
+.ai-message-bubble {
+    white-space: pre-line;
+}
+
+.footer {
+    width: min(1250px, 92%);
+    margin: 40px auto 0;
+    padding: 28px 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-top: 1px solid rgba(70, 110, 190, 0.15);
+
+    background: linear-gradient(
+        90deg,
+        rgba(235, 242, 255, 0.7),
+        rgba(248, 250, 255, 0.9),
+        rgba(235, 242, 255, 0.7)
+    );
+
+    color: #7182a3;
+    font-size: 15px;
+}
+
+.footer-left span {
+    color: #3769d6;
+    font-weight: 600;
+}
+
+.footer-center {
+    color: #63769b;
+    font-weight: 500;
+}
+
+.footer-right {
+    color: #7182a3;
+}
+
+.footer-right strong {
+    color: #3267d6;
+    font-weight: 700;
+}
+
+
+/* Mobile */
+@media (max-width: 700px) {
+    .footer {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+        padding: 24px 0;
+    }
+}
+
+/* =========================================================
+   SWAP STATIONS BUTTON
+========================================================= */
+
+.swap-stations-button {
+    width: 46px;
+    height: 46px;
+
+    align-self: end;
+
+    margin-bottom: 1px;
+
+    border: 1px solid #d9e2ee;
+
+    border-radius: 50%;
+
+    background: #eef3f9;
+
+    color: #3f5f8f;
+
+    font-size: 25px;
+    font-weight: 800;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.swap-stations-button:hover {
+    background: #e2eaf4;
+
+    transform: scale(1.06);
+
+    box-shadow:
+        0 6px 16px
+        rgba(63, 95, 143, 0.16);
+}
+
+
+.swap-stations-button:active {
+    transform: scale(0.94);
+}
+
+/* =========================================================
+   JOURNEY DATE CALENDAR
+========================================================= */
+
+.date-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+
+.date-input-wrapper input {
+    width: 100%;
+    padding-right: 48px;
+    color-scheme: light;
+}
+
+/* =========================================================
+   FINAL FIX - PNR & SEAT SEARCH FORM LAYOUT
+========================================================= */
+
+/* PNR */
+
+#pnrSearchForm {
+    display: grid !important;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        auto !important;
+
+    gap: 12px !important;
+
+    align-items: end !important;
+}
+
+
+#pnrSearchForm .field {
+    min-width: 0;
+}
+
+
+#pnrSearchForm .search-button {
+    width: auto !important;
+
+    min-width: 190px;
+
+    margin-top: 0 !important;
+
+    align-self: end !important;
+}
+
+
+/* SEAT AVAILABILITY */
+
+#seatAvailabilityForm {
+    display: flex !important;
+
+    flex-direction: column !important;
+
+    gap: 18px !important;
+
+    width: 100%;
+
+    align-items: stretch !important;
+}
+
+
+#seatAvailabilityForm .field {
+    width: 100%;
+
+    margin: 0 !important;
+}
+
+
+#seatAvailabilityForm #seatAvailabilityButton {
+    width: fit-content !important;
+
+    min-width: 220px;
+
+    margin-top: 6px !important;
+
+    margin-bottom: 0 !important;
+
+    align-self: flex-start !important;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 760px) {
+
+    #pnrSearchForm {
+        grid-template-columns: 1fr !important;
+    }
+
+
+    #pnrSearchForm .search-button {
+        width: 100% !important;
+
+        min-width: 0;
+    }
+
+
+    #seatAvailabilityForm #seatAvailabilityButton {
+        width: 100% !important;
+
+        min-width: 0;
+    }
+
+}
+/* Keep inactive search forms completely hidden */
+
+#betweenSearchForm.hidden,
+#pnrSection.hidden,
+#seatAvailabilitySection.hidden {
+    display: none !important;
+}
+/* =========================================================
+   FINAL TAB VISIBILITY FIX
+========================================================= */
+
+#trainSearchForm.hidden,
+#betweenSearchForm.hidden,
+#pnrSection.hidden,
+#seatAvailabilitySection.hidden {
+    display: none !important;
+}
+
+/* Never show the Between Stations button
+   when its form is hidden */
+#betweenSearchForm.hidden #betweenSearchButton {
+    display: none !important;
 }

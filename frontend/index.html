@@ -29,6 +29,7 @@
         content="index, follow"
     >
 
+
     <!-- =====================================================
          GOOGLE SEARCH CONSOLE VERIFICATION
     ====================================================== -->
@@ -174,7 +175,7 @@
 
     <link
         rel="stylesheet"
-        href="/style.css"
+        href="style.css"
     >
 
 </head>
@@ -274,6 +275,24 @@
                 📍 Between Stations
             </button>
 
+
+            <button
+                id="pnrTab"
+                class="tab"
+                type="button"
+            >
+                🎫 PNR Status
+            </button>
+
+
+            <button
+                id="seatAvailabilityTab"
+                class="tab"
+                type="button"
+            >
+                💺 Seat Availability
+            </button>
+
         </div>
 
 
@@ -298,7 +317,7 @@
                     type="text"
                     maxlength="5"
                     inputmode="numeric"
-                    placeholder="e.g. 12827"
+                    placeholder="Enter 5-digit train number"
                     autocomplete="off"
                     aria-label="Train number"
                     title="Train number"
@@ -338,79 +357,396 @@
 
 
 
-        <!-- =================================================
-             BETWEEN STATION SEARCH
-        ================================================== -->
+<!-- =================================================
+     BETWEEN STATION SEARCH
+================================================= -->
 
-        <form
-            id="betweenSearchForm"
-            class="search-form between-form hidden"
+<form
+    id="betweenSearchForm"
+    class="search-form between-form hidden"
+>
+
+    <div class="field">
+
+        <label>
+            FROM STATION
+        </label>
+
+        <input
+            id="fromStation"
+            type="text"
+            placeholder="Source station"
+            autocomplete="off"
+            aria-label="From station"
+            title="From station"
         >
 
-            <div class="field">
-
-                <label>
-                    FROM STATION
-                </label>
-
-                <input
-                    id="fromStation"
-                    type="text"
-                    placeholder="e.g. BQA"
-                    autocomplete="off"
-                    aria-label="From station"
-                    title="From station"
-                >
-
-            </div>
+    </div>
 
 
-            <div class="field">
-
-                <label>
-                    DESTINATION STATION
-                </label>
-
-                <input
-                    id="toStation"
-                    type="text"
-                    placeholder="e.g. MSA"
-                    autocomplete="off"
-                    aria-label="Destination station"
-                    title="Destination station"
-                >
-
-            </div>
+    <button
+        id="swapStationsButton"
+        class="swap-stations-button"
+        type="button"
+        aria-label="Swap stations"
+        title="Swap stations"
+    >
+        ↔
+    </button>
 
 
-            <div class="field">
+    <div class="field">
 
-                <label>
-                    JOURNEY DATE
-                    <span>
-                        OPTIONAL
-                    </span>
-                </label>
+        <label>
+            DESTINATION STATION
+        </label>
 
-                <input
-                    id="betweenDate"
-                    type="date"
-                    aria-label="Journey date"
-                    title="Journey date"
-                >
+        <input
+            id="toStation"
+            type="text"
+            placeholder="Destination station"
+            autocomplete="off"
+            aria-label="Destination station"
+            title="Destination station"
+        >
 
-            </div>
+    </div>
 
 
-            <button
-                id="betweenSearchButton"
-                class="search-button"
-                type="submit"
+    <div class="field">
+
+        <label>
+            JOURNEY DATE
+            <span>OPTIONAL</span>
+        </label>
+
+        <div class="date-input-wrapper">
+
+            <input
+                id="betweenDate"
+                type="date"
+                aria-label="Journey date"
+                title="Journey date"
             >
-                Search Trains
-            </button>
 
-        </form>
+        </div>
+
+    </div>
+
+
+    <button
+        id="betweenSearchButton"
+        class="search-button"
+        type="submit"
+    >
+        Search Trains
+    </button>
+
+</form>
+
+
+
+        <!-- =================================================
+             PNR SEARCH
+        ================================================== -->
+
+        <section
+            id="pnrSection"
+            class="pnr-section hidden"
+        >
+
+            <form
+                id="pnrSearchForm"
+                class="pnr-search-form"
+            >
+
+                <div class="field">
+
+                    <label>
+                        PNR NUMBER
+                    </label>
+
+                    <input
+                        id="pnrNumber"
+                        type="text"
+                        inputmode="numeric"
+                        maxlength="10"
+                        placeholder="Enter 10-digit PNR"
+                        autocomplete="off"
+                        aria-label="PNR number"
+                        title="Enter 10-digit PNR"
+                    >
+
+                </div>
+
+
+                <button
+                    id="pnrSearchButton"
+                    class="search-button"
+                    type="submit"
+                >
+                    Check PNR Status
+                </button>
+
+            </form>
+
+
+            <div
+                id="pnrResult"
+                class="pnr-result hidden"
+            ></div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             SEAT AVAILABILITY SEARCH
+        ================================================== -->
+
+        <section
+            id="seatAvailabilitySection"
+            class="pnr-section hidden"
+        >
+
+            <form
+                id="seatAvailabilityForm"
+                class="pnr-search-form"
+            >
+
+                <!-- TRAIN NUMBER -->
+
+                <div class="field">
+
+                    <label>
+                        TRAIN NUMBER
+                    </label>
+
+                    <input
+                        id="seatTrainNumber"
+                        type="text"
+                        inputmode="numeric"
+                        maxlength="5"
+                        placeholder="Enter 5-digit train number"
+                        autocomplete="off"
+                        aria-label="Train number"
+                        title="Train number"
+                    >
+
+                </div>
+
+
+                <!-- FROM STATION -->
+
+                <div class="field">
+
+                    <label>
+                        FROM STATION
+                    </label>
+
+                    <input
+                        id="seatSource"
+                        type="text"
+                        maxlength="10"
+                        placeholder="Enter source station code"
+                        autocomplete="off"
+                        aria-label="Source station"
+                        title="Source station"
+                    >
+
+                </div>
+
+
+                <!-- TO STATION -->
+
+                <div class="field">
+
+                    <label>
+                        TO STATION
+                    </label>
+
+                    <input
+                        id="seatDestination"
+                        type="text"
+                        maxlength="10"
+                        placeholder="Enter destination station code"
+                        autocomplete="off"
+                        aria-label="Destination station"
+                        title="Destination station"
+                    >
+
+                </div>
+
+
+                <!-- =================================================
+                     JOURNEY DATE
+                ================================================== -->
+
+                <div class="field">
+
+                    <label for="seatJourneyDate">
+                        JOURNEY DATE
+                    </label>
+
+                    <input
+                        id="seatJourneyDate"
+                        name="journeyDate"
+                        type="date"
+                        required
+                        aria-label="Journey date"
+                        title="Select journey date"
+                    >
+
+                </div>
+
+
+                <!-- CLASS -->
+
+                <div class="field">
+
+                    <label>
+                        CLASS
+                    </label>
+
+                    <select
+                        id="seatClassCode"
+                        aria-label="Travel class"
+                        title="Travel class"
+                    >
+
+                        <option value="1A">
+                            1A — First AC
+                        </option>
+
+                        <option value="2A">
+                            2A — AC 2 Tier
+                        </option>
+
+                        <option value="3A">
+                            3A — AC 3 Tier
+                        </option>
+
+                        <option value="3E">
+                            3E — AC 3 Economy
+                        </option>
+
+                        <option value="CC">
+                            CC — Chair Car
+                        </option>
+
+                        <option value="EC">
+                            EC — Executive Chair Car
+                        </option>
+
+                        <option value="EA">
+                            EA — Executive Anubhuti
+                        </option>
+
+                        <option value="FC">
+                            FC — First Class
+                        </option>
+
+                        <option value="SL">
+                            SL — Sleeper
+                        </option>
+
+                        <option
+                            value="2S"
+                            selected
+                        >
+                            2S — Second Sitting
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- QUOTA -->
+
+                <div class="field">
+
+                    <label>
+                        QUOTA
+                    </label>
+
+                    <select
+                        id="seatQuotaCode"
+                        aria-label="Booking quota"
+                        title="Booking quota"
+                    >
+
+                        <option
+                            value="GN"
+                            selected
+                        >
+                            GN — General
+                        </option>
+
+                        <option value="TQ">
+                            TQ — Tatkal
+                        </option>
+
+                        <option value="PT">
+                            PT — Premium Tatkal
+                        </option>
+
+                        <option value="LD">
+                            LD — Ladies
+                        </option>
+
+                        <option value="DF">
+                            DF — Defence
+                        </option>
+
+                        <option value="FT">
+                            FT — Foreign Tourist
+                        </option>
+
+                        <option value="SS">
+                            SS — Senior Citizen
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- CHECK AVAILABILITY BUTTON -->
+
+                <button
+                    id="seatAvailabilityButton"
+                    class="search-button"
+                    type="submit"
+                >
+                    Check Availability
+                </button>
+
+            </form>
+
+
+            <!-- =================================================
+                 SEAT AVAILABILITY RESULT
+            ================================================== -->
+
+            <div
+                id="seatAvailabilityResult"
+                class="pnr-result hidden"
+            ></div>
+
+
+            <!-- =================================================
+                 LOADING
+            ================================================== -->
+
+            <div
+                id="seatAvailabilityLoading"
+                class="seat-availability-loading hidden"
+            >
+                Checking real-time availability...
+            </div>
+
+        </section>
 
     </div>
 
@@ -575,8 +911,6 @@
 <div class="stats-grid">
 
 
-    <!-- TOTAL JOURNEY DURATION -->
-
     <div class="stat-card">
 
         <div class="stat-icon">
@@ -598,8 +932,6 @@
     </div>
 
 
-
-    <!-- MAX SPEED -->
 
     <div class="stat-card">
 
@@ -627,8 +959,6 @@
 
 
 
-    <!-- CURRENT STATION -->
-
     <div class="stat-card">
 
         <div class="stat-icon">
@@ -654,8 +984,6 @@
     </div>
 
 
-
-    <!-- NEXT STATION -->
 
     <div class="stat-card">
 
@@ -683,8 +1011,6 @@
 
 
 
-    <!-- DELAY -->
-
     <div class="stat-card">
 
         <div class="stat-icon">
@@ -710,8 +1036,6 @@
     </div>
 
 
-
-    <!-- JOURNEY PROGRESS -->
 
     <div class="stat-card">
 
@@ -747,8 +1071,6 @@
 
 <div class="content-grid">
 
-
-    <!-- MAP -->
 
     <div class="panel map-panel">
 
@@ -838,8 +1160,6 @@
     </div>
 
 
-
-    <!-- ETA -->
 
     <div class="panel">
 
@@ -983,8 +1303,6 @@
     <div class="timing-grid">
 
 
-        <!-- PREVIOUS -->
-
         <div class="timing-card">
 
             <div class="timing-icon">
@@ -1041,8 +1359,6 @@
 
 
 
-        <!-- CURRENT -->
-
         <div class="timing-card current-timing">
 
             <div class="timing-icon">
@@ -1098,8 +1414,6 @@
         </div>
 
 
-
-        <!-- NEXT -->
 
         <div class="timing-card">
 
@@ -1240,6 +1554,72 @@
 
 
 <!-- =====================================================
+     COACH POSITION
+===================================================== -->
+
+<section
+    id="coachPositionSection"
+    class="coach-position-section hidden"
+>
+
+    <div class="panel">
+
+        <div class="panel-header">
+
+            <div>
+
+                <span class="coach-section-label">
+                    LIVE TRAIN INFORMATION
+                </span>
+
+                <h2>
+                    🚆 Coach Position
+                </h2>
+
+                <p id="coachStationInfo">
+                    Coach position information
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="coachPlatform"
+            class="coach-platform"
+        >
+            Platform —
+        </div>
+
+
+        <div class="coach-formation-wrapper">
+
+            <div class="coach-formation-title">
+                Train Formation
+            </div>
+
+
+            <div
+                id="coachFormation"
+                class="coach-formation"
+            ></div>
+
+        </div>
+
+
+        <div
+            id="coachDetails"
+            class="coach-details hidden"
+        ></div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
      UPDATE
 ===================================================== -->
 
@@ -1275,20 +1655,18 @@
      FOOTER
 ===================================================== -->
 
-<footer>
+<footer class="footer">
+    <div class="footer-left">
+        © 2026 <span>RailTrack</span>
+    </div>
 
-    <span>
-        © 2026 RailTrack
-    </span>
-
-    <span>
+    <div class="footer-center">
         Live Indian Railway Tracking
-    </span>
+    </div>
 
-    <span>
-        Real-time railway data
-    </span>
-
+    <div class="footer-right">
+        Created by <strong>Abhinaba Das</strong>
+    </div>
 </footer>
 
 
@@ -1304,6 +1682,89 @@
 
 
 <!-- =====================================================
+     SEAT AVAILABILITY DEFAULT DATE
+===================================================== -->
+
+<script>
+
+(function () {
+
+    const dateInput =
+        document.getElementById(
+            "seatJourneyDate"
+        );
+
+    if (!dateInput) {
+        return;
+    }
+
+
+    const today =
+        new Date();
+
+
+    /* Prevent past dates */
+
+    const todayYear =
+        today.getFullYear();
+
+    const todayMonth =
+        String(
+            today.getMonth() + 1
+        ).padStart(2, "0");
+
+    const todayDay =
+        String(
+            today.getDate()
+        ).padStart(2, "0");
+
+
+    const todayValue =
+        `${todayYear}-${todayMonth}-${todayDay}`;
+
+
+    dateInput.min =
+        todayValue;
+
+
+    /* Default = Tomorrow */
+
+    const tomorrow =
+        new Date(today);
+
+    tomorrow.setDate(
+        today.getDate() + 1
+    );
+
+
+    const tomorrowYear =
+        tomorrow.getFullYear();
+
+    const tomorrowMonth =
+        String(
+            tomorrow.getMonth() + 1
+        ).padStart(2, "0");
+
+    const tomorrowDay =
+        String(
+            tomorrow.getDate()
+        ).padStart(2, "0");
+
+
+    const tomorrowValue =
+        `${tomorrowYear}-${tomorrowMonth}-${tomorrowDay}`;
+
+
+    dateInput.value =
+        tomorrowValue;
+
+})();
+
+</script>
+
+
+
+<!-- =====================================================
      RAILTRACK APP JS
 ===================================================== -->
 
@@ -1311,6 +1772,147 @@
     src="/app.js"
 ></script>
 
+<!-- =====================================================
+     RAILTRACK AI ASSISTANT
+===================================================== -->
+
+<div id="aiAssistant" class="ai-assistant">
+
+    <button
+        id="aiAssistantButton"
+        class="ai-assistant-button"
+        type="button"
+        aria-label="Open RailTrack AI Assistant"
+    >
+        <span class="ai-assistant-icon">
+            🤖
+        </span>
+
+        <span class="ai-assistant-button-text">
+            AI Assistant
+        </span>
+    </button>
+
+    <div
+        id="aiChatWindow"
+        class="ai-chat-window hidden"
+    >
+
+        <div class="ai-chat-header">
+
+            <div class="ai-chat-title">
+
+                <div class="ai-chat-avatar">
+                    🤖
+                </div>
+
+                <div>
+                    <strong>
+                        RailTrack AI
+                    </strong>
+
+                    <span>
+                        Your train assistant
+                    </span>
+                </div>
+
+            </div>
+
+            <button
+                id="aiChatClose"
+                class="ai-chat-close"
+                type="button"
+                aria-label="Close AI Assistant"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <div
+            id="aiChatMessages"
+            class="ai-chat-messages"
+        >
+
+            <div class="ai-message ai-message-bot">
+
+                <div class="ai-message-bubble">
+
+                    👋 Hi! I'm <strong>RailTrack AI</strong>.
+
+                    <br><br>
+
+                    I can help you with your train,
+                    live location, delay, ETA,
+                    route and station information.
+
+                    <br><br>
+
+                    Ask me anything about your journey.
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div
+            id="aiQuickQuestions"
+            class="ai-quick-questions"
+        >
+
+            <button
+                type="button"
+                class="ai-quick-question"
+                data-question="Where is my train?"
+            >
+                📍 Where is my train?
+            </button>
+
+            <button
+                type="button"
+                class="ai-quick-question"
+                data-question="Is my train late?"
+            >
+                ⏱ Is my train late?
+            </button>
+
+            <button
+                type="button"
+                class="ai-quick-question"
+                data-question="What is the next station?"
+            >
+                🚉 Next station?
+            </button>
+
+        </div>
+
+        <form
+            id="aiChatForm"
+            class="ai-chat-form"
+        >
+
+            <input
+                id="aiChatInput"
+                type="text"
+                placeholder="Ask about your train..."
+                autocomplete="off"
+                maxlength="500"
+            >
+
+            <button
+                id="aiChatSend"
+                type="submit"
+                aria-label="Send message"
+            >
+                ➤
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
 
 </body>
 

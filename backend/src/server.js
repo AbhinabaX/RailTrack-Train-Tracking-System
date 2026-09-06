@@ -1,32 +1,50 @@
+"use strict";
+
 require("dotenv").config();
 
+const path = require("path");
 
-const path =
-  require("path");
+const express = require("express");
 
-
-const express =
-  require("express");
-
-
-const cors =
-  require("cors");
-
+const cors = require("cors");
 
 const trainRoutes =
   require("./routes/trainRoutes");
 
-
 const stationRoutes =
   require("./routes/stationRoutes");
-
 
 const healthRoutes =
   require("./routes/healthRoutes");
 
+const aiRoutes = require("./routes/aiRoutes");
 
-const app =
-  express();
+
+/* =====================================================
+   PNR API
+===================================================== */
+
+const pnrRoutes =
+  require("./routes/pnrRoutes");
+
+
+/* =====================================================
+   COACH POSITION API
+===================================================== */
+
+const coachRoutes =
+  require("./routes/coachRoutes");
+
+
+/* =====================================================
+   SEAT AVAILABILITY API
+===================================================== */
+
+const seatAvailabilityRoutes =
+  require("./routes/seatAvailabilityRoutes");
+
+
+const app = express();
 
 
 const PORT =
@@ -91,6 +109,41 @@ app.use(
 
 
 /* =====================================================
+   PNR API
+===================================================== */
+
+app.use(
+  "/api/pnr",
+  pnrRoutes
+);
+
+
+/* =====================================================
+   COACH POSITION API
+===================================================== */
+
+app.use(
+  "/api/coaches",
+  coachRoutes
+);
+
+
+/* =====================================================
+   SEAT AVAILABILITY API
+===================================================== */
+
+app.use(
+  "/api/seats",
+  seatAvailabilityRoutes
+);
+
+app.use(
+    "/api/ai",
+    aiRoutes
+);
+
+
+/* =====================================================
    API INFORMATION
 ===================================================== */
 
@@ -123,7 +176,16 @@ app.get(
           "/api/trains/between/BQA/MASAGRAM",
 
         stations:
-          "/api/stations"
+          "/api/stations",
+
+        pnr:
+          "/api/pnr/1234567890",
+
+        coaches:
+          "/api/coaches/12828/CDGR",
+
+        seats:
+          "/api/seats/12828?source=HWH&destination=MAS&journeyDate=2026-09-10&classCode=2S&quotaCode=GN"
 
       }
 
@@ -172,8 +234,10 @@ app.get(
           success: false,
 
           error: {
+
             message:
               "API endpoint not found."
+
           }
 
         });
@@ -205,6 +269,7 @@ app.use(
   ) => {
 
     console.error("");
+
     console.error(
       "================ API ERROR ================"
     );
@@ -237,6 +302,7 @@ app.use(
 
     const status =
       Number(
+        error.statusCode ||
         error.status
       ) || 500;
 
@@ -275,25 +341,51 @@ app.listen(
   () => {
 
     console.log("");
+
     console.log(
       "=========================================="
     );
+
 
     console.log(
       "🚆 RailTrack Backend Running"
     );
 
+
     console.log(
       `🌐 http://localhost:${PORT}`
     );
+
 
     console.log(
       `❤️ Health: http://localhost:${PORT}/api/health`
     );
 
+
     console.log(
       `🚆 Train API: http://localhost:${PORT}/api/trains`
     );
+
+
+    console.log(
+      `🚉 Station API: http://localhost:${PORT}/api/stations`
+    );
+
+
+    console.log(
+      `🎫 PNR API: http://localhost:${PORT}/api/pnr`
+    );
+
+
+    console.log(
+      `🚃 Coach API: http://localhost:${PORT}/api/coaches`
+    );
+
+
+    console.log(
+      `💺 Seat Availability API: http://localhost:${PORT}/api/seats`
+    );
+
 
     console.log(
       "=========================================="
