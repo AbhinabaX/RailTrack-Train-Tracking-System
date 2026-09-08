@@ -66,36 +66,45 @@ async function getSeatAvailability({
 
 
     console.log("");
+
     console.log(
         "======================================"
     );
+
     console.log(
         "SEAT AVAILABILITY REQUEST"
     );
+
     console.log(
         "TRAIN:",
         trainNumber
     );
+
     console.log(
         "SOURCE:",
         source
     );
+
     console.log(
         "DESTINATION:",
         destination
     );
+
     console.log(
         "JOURNEY DATE:",
         journeyDate
     );
+
     console.log(
         "CLASS:",
         classCode
     );
+
     console.log(
         "QUOTA:",
         quotaCode
     );
+
     console.log(
         "======================================"
     );
@@ -108,6 +117,7 @@ async function getSeatAvailability({
                 url,
                 {
                     params: {
+
                         source:
                             String(
                                 source
@@ -125,7 +135,8 @@ async function getSeatAvailability({
                         journeyDate:
                             String(
                                 journeyDate
-                            ).trim(),
+                            )
+                                .trim(),
 
                         classCode:
                             String(
@@ -143,6 +154,7 @@ async function getSeatAvailability({
                     },
 
                     headers: {
+
                         Authorization:
                             `Bearer ${apiKey}`,
 
@@ -180,34 +192,73 @@ async function getSeatAvailability({
         );
 
 
+        /* ============================================
+           RAILRADAR API ERROR
+        ============================================ */
+
+        const apiError =
+            error?.response?.data?.error;
+
+
+        /*
+         * Invalid source / destination
+         */
+
         if (
-            error.response
+            apiError?.code ===
+            "API:DATA_NOT_AVAILABLE"
         ) {
 
-            console.error(
-                "Status:",
-                error.response.status
+            throw new Error(
+                apiError.message ||
+                "Invalid Source and Destination."
             );
-
-            console.error(
-                "Response:",
-                error.response.data
-            );
-
-        } else {
-
-            console.error(
-                "Message:",
-                error.message
-            );
-
         }
 
 
-        throw error;
+        /*
+         * Invalid API key
+         */
+
+        if (
+            error?.response?.status === 401
+        ) {
+
+            throw new Error(
+                "Invalid RailRadar API key."
+            );
+        }
+
+
+        /*
+         * Other RailRadar API errors
+         */
+
+        if (
+            apiError?.message
+        ) {
+
+            throw new Error(
+                apiError.message
+            );
+        }
+
+
+        /*
+         * Network / Axios / unknown error
+         */
+
+        throw new Error(
+            error?.message ||
+            "Unable to fetch seat availability."
+        );
     }
 }
 
+
+/* =====================================================
+   EXPORT
+===================================================== */
 
 module.exports = {
     getSeatAvailability

@@ -7455,8 +7455,10 @@ function getPNRStatusClass(status) {
 
     return "unknown";
 }
+
 /* =========================================================
    RENDER PNR RESULT
+   RAILRADAR STYLE
 ========================================================= */
 
 function renderPNRResult(data) {
@@ -7465,27 +7467,132 @@ function renderPNRResult(data) {
         return;
     }
 
-
     if (!data) {
-
         throw new Error(
             "PNR data is unavailable."
         );
-
     }
 
 
+    /* =====================================================
+       HELPERS
+    ===================================================== */
+
+    function getValue(object, paths) {
+
+        for (const path of paths) {
+
+            const parts =
+                path.split(".");
+
+            let value =
+                object;
+
+            for (const part of parts) {
+
+                if (
+                    value === undefined ||
+                    value === null
+                ) {
+                    break;
+                }
+
+                value =
+                    value[part];
+            }
+
+            if (
+                value !== undefined &&
+                value !== null &&
+                value !== ""
+            ) {
+                return value;
+            }
+        }
+
+        return null;
+    }
+
+
+    function safe(value) {
+
+        if (
+            value === undefined ||
+            value === null ||
+            value === ""
+        ) {
+            return "";
+        }
+
+        return escapeHtml(
+            String(value)
+        );
+    }
+
+
+    function formatJourneyDate(value) {
+
+        if (!value) {
+            return "";
+        }
+
+        const date =
+            new Date(value);
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+            return safe(value);
+        }
+
+        return escapeHtml(
+            date.toLocaleDateString(
+                "en-IN",
+                {
+                    weekday: "short",
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric"
+                }
+            )
+        );
+    }
+
+
+    function getClassName(code) {
+
+        const classes = {
+            "1A": "First AC",
+            "2A": "AC 2-Tier",
+            "3A": "AC 3-Tier",
+            "3E": "AC 3 Economy",
+            "SL": "Sleeper",
+            "CC": "AC Chair Car",
+            "EC": "Executive Chair Car",
+            "2S": "Second Sitting",
+            "FC": "First Class"
+        };
+
+        return classes[code] || "";
+    }
+
+
+    /* =====================================================
+       MAIN DATA
+    ===================================================== */
+
     const train =
         data.train || {};
-
-    const journey =
-        data.journey || {};
 
     const charting =
         data.charting || {};
 
     const passengers =
-        Array.isArray(data.passengers)
+        Array.isArray(
+            data.passengers
+        )
             ? data.passengers
             : [];
 
@@ -7504,389 +7611,870 @@ function renderPNRResult(data) {
 
 
     /* =====================================================
-       PASSENGERS
+       TRAIN DATA
     ===================================================== */
 
-    const passengerHTML =
-        passengers.length
-            ? passengers.map(
-                (passenger) => {
+    const trainNumber =
+        getValue(
+            train,
+            [
+                "number",
+                "trainNumber"
+            ]
+        );
 
-                    const bookingStatus =
-                        passenger.bookingStatus ||
-                        "—";
+    const trainName =
+        getValue(
+            train,
+            [
+                "name",
+                "trainName"
+            ]
+        );
 
-                    const currentStatus =
-                        passenger.currentStatus ||
-                        "—";
+    const sourceCode =
+        getValue(
+            source,
+            [
+                "code",
+                "stationCode"
+            ]
+        );
 
-                    const coach =
-                        passenger.coach ||
-                        "—";
+    const sourceName =
+        getValue(
+            source,
+            [
+                "name",
+                "stationName"
+            ]
+        );
 
-                    const berthNumber =
-                        passenger.berthNumber ??
-                        "—";
+    const destinationCode =
+        getValue(
+            destination,
+            [
+                "code",
+                "stationCode"
+            ]
+        );
 
-                    const berthCode =
-                        passenger.berthCode ||
-                        "—";
-
-
-                    return `
-                        <div class="pnr-passenger">
-
-                            <div class="pnr-passenger-title">
-                                Passenger ${escapeHtml(
-                                    passenger.passengerNumber ??
-                                    "—"
-                                )}
-                            </div>
-
-
-                            <div class="pnr-passenger-grid">
-
-                                <div>
-                                    <span>
-                                        BOOKING STATUS
-                                    </span>
-
-                                    <strong
-    class="pnr-status-badge ${getPNRStatusClass(bookingStatus)}"
->
-    ${escapeHtml(
-        bookingStatus
-    )}
-</strong>
-                                </div>
-
-
-                                <div>
-                                    <span>
-                                        CURRENT STATUS
-                                    </span>
-
-                                    <strong
-    class="pnr-status-badge ${getPNRStatusClass(currentStatus)}"
->
-    ${escapeHtml(
-        currentStatus
-    )}
-</strong>
-                                </div>
-
-
-                                <div>
-                                    <span>
-                                        COACH
-                                    </span>
-
-                                    <strong>
-                                        ${escapeHtml(
-                                            coach
-                                        )}
-                                    </strong>
-                                </div>
-
-
-                                <div>
-                                    <span>
-                                        BERTH
-                                    </span>
-
-                                    <strong>
-                                        ${
-                                            berthNumber !== "—"
-                                                ? escapeHtml(
-                                                    `${berthNumber} ${berthCode}`
-                                                )
-                                                : "—"
-                                        }
-                                    </strong>
-                                </div>
-
-                            </div>
-
-                        </div>
-                    `;
-
-                }
-            ).join("")
-            : `
-                <div class="pnr-empty">
-                    Passenger information unavailable.
-                </div>
-            `;
+    const destinationName =
+        getValue(
+            destination,
+            [
+                "name",
+                "stationName"
+            ]
+        );
 
 
     /* =====================================================
-       FINAL RESULT
+       JOURNEY DATA
+    ===================================================== */
+
+    const journeyDate =
+        getValue(
+            train,
+            [
+                "journeyDate",
+                "journeyDateRaw"
+            ]
+        );
+
+    const journeyClass =
+        getValue(
+            train,
+            [
+                "journeyClass",
+                "class"
+            ]
+        );
+
+    const bookingFare =
+        getValue(
+            train,
+            [
+                "bookingFare",
+                "fare"
+            ]
+        );
+
+
+    /* =====================================================
+       QUOTA
+    ===================================================== */
+
+    let quota =
+        getValue(
+            data,
+            [
+                "quota",
+                "quotaCode",
+                "bookingQuota"
+            ]
+        );
+
+
+    /*
+       Sometimes RailRadar includes quota
+       inside passenger booking data.
+    */
+
+    if (!quota && passengers.length) {
+
+        quota =
+            getValue(
+                passengers[0],
+                [
+                    "booking.quota",
+                    "booking.quotaCode",
+                    "current.quota",
+                    "current.quotaCode"
+                ]
+            );
+
+    }
+
+
+    /*
+       If quota is included at the end of a
+       booking status such as:
+
+       CNF/B2/3/UB/PT
+
+       extract PT.
+    */
+
+    if (
+        !quota &&
+        passengers.length
+    ) {
+
+        const bookingStatus =
+            getValue(
+                passengers[0],
+                [
+                    "booking.status",
+                    "booking.bookingStatus",
+                    "bookingStatus"
+                ]
+            );
+
+        if (
+            typeof bookingStatus === "string"
+        ) {
+
+            const parts =
+                bookingStatus
+                    .split("/")
+                    .map(
+                        part =>
+                            part.trim()
+                    );
+
+            const last =
+                parts[parts.length - 1];
+
+            if (
+                last &&
+                /^[A-Z]{1,4}$/i.test(last)
+            ) {
+                quota =
+                    last;
+            }
+        }
+    }
+
+
+    /* =====================================================
+       PASSENGER DATA
+    ===================================================== */
+
+    const passengerHTML =
+        passengers
+            .map(
+                (passenger, index) => {
+
+                    const booking =
+                        passenger.booking ||
+                        {};
+
+                    const current =
+                        passenger.current ||
+                        {};
+
+
+                    /* -------------------------------------
+                       STATUS
+                    ------------------------------------- */
+
+                    let bookingStatus =
+                        getValue(
+                            passenger,
+                            [
+                                "bookingStatus",
+                                "booking.status",
+                                "booking.bookingStatus"
+                            ]
+                        );
+
+
+                    let currentStatus =
+                        getValue(
+                            passenger,
+                            [
+                                "currentStatus",
+                                "current.status",
+                                "current.currentStatus"
+                            ]
+                        );
+
+
+                    /*
+                       RailRadar may provide:
+                       booking: { status: "CNF/B2/3/UB/PT" }
+                    */
+
+                    if (
+                        !bookingStatus &&
+                        typeof booking === "string"
+                    ) {
+                        bookingStatus =
+                            booking;
+                    }
+
+
+                    if (
+                        !currentStatus &&
+                        typeof current === "string"
+                    ) {
+                        currentStatus =
+                            current;
+                    }
+
+
+                    /* -------------------------------------
+                       BOOKING STRING
+                    ------------------------------------- */
+
+                    const bookingString =
+                        String(
+                            bookingStatus || ""
+                        );
+
+
+                    const currentString =
+                        String(
+                            currentStatus || ""
+                        );
+
+
+                    /*
+                       Example:
+
+                       CNF/B2/3/UB/PT
+
+                       CNF = status
+                       B2  = coach
+                       3   = seat
+                       UB  = berth type
+                       PT  = quota
+                    */
+
+                    const bookingParts =
+                        bookingString
+                            .split("/")
+                            .map(
+                                part =>
+                                    part.trim()
+                            );
+
+
+                    /* -------------------------------------
+                       COACH
+                    ------------------------------------- */
+
+                    let coach =
+                        getValue(
+                            passenger,
+                            [
+                                "coach",
+                                "booking.coach",
+                                "current.coach",
+                                "booking.coachNumber",
+                                "current.coachNumber"
+                            ]
+                        );
+
+
+                    if (!coach) {
+
+                        coach =
+                            bookingParts.find(
+                                part =>
+                                    /^[A-Z]{1,3}\d+$/i
+                                        .test(part)
+                            );
+                    }
+
+
+                    /* -------------------------------------
+                       SEAT NUMBER
+                    ------------------------------------- */
+
+                    let seatNumber =
+                        getValue(
+                            passenger,
+                            [
+                                "seatNumber",
+                                "booking.seatNumber",
+                                "current.seatNumber",
+                                "berthNumber",
+                                "booking.berthNumber",
+                                "current.berthNumber"
+                            ]
+                        );
+
+
+                    if (
+                        seatNumber === null &&
+                        bookingParts.length >= 3
+                    ) {
+
+                        const possibleSeat =
+                            bookingParts[2];
+
+                        if (
+                            /^\d+$/.test(
+                                possibleSeat
+                            )
+                        ) {
+
+                            seatNumber =
+                                possibleSeat;
+
+                        }
+                    }
+
+
+                    /* -------------------------------------
+                       BERTH TYPE
+                    ------------------------------------- */
+
+                    let berthCode =
+                        getValue(
+                            passenger,
+                            [
+                                "berthCode",
+                                "booking.berthCode",
+                                "current.berthCode",
+                                "berthType",
+                                "booking.berthType",
+                                "current.berthType"
+                            ]
+                        );
+
+
+                    if (
+                        !berthCode &&
+                        bookingParts.length >= 4
+                    ) {
+
+                        const possibleBerth =
+                            bookingParts[3];
+
+                        if (
+                            /^[A-Z]{1,3}$/i
+                                .test(
+                                    possibleBerth
+                                )
+                        ) {
+
+                            berthCode =
+                                possibleBerth;
+                        }
+                    }
+
+
+                    /* -------------------------------------
+                       FINAL STATUS
+                    ------------------------------------- */
+
+                    const displayStatus =
+                        currentStatus ||
+                        bookingStatus ||
+                        "—";
+
+
+                    const bookingDisplay =
+                        bookingStatus ||
+                        bookingString ||
+                        "—";
+
+
+                    const passengerNumber =
+                        getValue(
+                            passenger,
+                            [
+                                "serialNumber",
+                                "passengerNumber"
+                            ]
+                        ) ||
+                        (index + 1);
+
+
+                    return `
+
+                        <div class="pnr-passenger">
+
+                            <div
+                                class="pnr-passenger-title"
+                                style="
+                                    display:flex;
+                                    align-items:center;
+                                    justify-content:space-between;
+                                    gap:20px;
+                                "
+                            >
+
+                                <span>
+                                    Passenger ${safe(
+                                        passengerNumber
+                                    )}
+                                </span>
+
+                                <strong
+                                    class="pnr-status-badge ${getPNRStatusClass(
+                                        displayStatus
+                                    )}"
+                                >
+                                    ${safe(
+                                        displayStatus
+                                    )}
+                                </strong>
+
+                            </div>
+
+
+                            <div
+                                style="
+                                    margin-top:8px;
+                                    color:var(--muted);
+                                    font-size:14px;
+                                "
+                            >
+
+                                Booked
+                                ${safe(
+                                    bookingDisplay
+                                )}
+
+                            </div>
+
+
+                            ${
+                                coach ||
+                                seatNumber ||
+                                berthCode
+                                    ? `
+
+                                        <div
+                                            class="pnr-passenger-grid"
+                                            style="margin-top:16px;"
+                                        >
+
+                                            ${
+                                                coach
+                                                    ? `
+                                                        <div>
+                                                            <span>
+                                                                COACH
+                                                            </span>
+
+                                                            <strong>
+                                                                ${safe(
+                                                                    coach
+                                                                )}
+                                                            </strong>
+                                                        </div>
+                                                    `
+                                                    : ""
+                                            }
+
+
+                                            ${
+                                                seatNumber !== null
+                                                    ? `
+                                                        <div>
+                                                            <span>
+                                                                SEAT NUMBER
+                                                            </span>
+
+                                                            <strong>
+                                                                ${safe(
+                                                                    seatNumber
+                                                                )}
+                                                            </strong>
+                                                        </div>
+                                                    `
+                                                    : ""
+                                            }
+
+
+                                            ${
+                                                berthCode
+                                                    ? `
+                                                        <div>
+                                                            <span>
+                                                                BERTH TYPE
+                                                            </span>
+
+                                                            <strong>
+                                                                ${safe(
+                                                                    berthCode
+                                                                )}
+                                                            </strong>
+                                                        </div>
+                                                    `
+                                                    : ""
+                                            }
+
+                                        </div>
+
+                                    `
+                                    : ""
+                            }
+
+                        </div>
+
+                    `;
+                }
+            )
+            .join("");
+
+
+    /* =====================================================
+       CHART
+    ===================================================== */
+
+    const chartStatus =
+        charting.status ||
+        (
+            charting.isPrepared
+                ? "Chart Prepared"
+                : "Chart Not Prepared"
+        );
+
+
+    const chartLink =
+        charting.chartUrl ||
+        charting.url ||
+        "";
+
+
+    /* =====================================================
+       INFORMATION MESSAGE
+    ===================================================== */
+
+    const messages =
+        Array.isArray(
+            data.informationMessage
+        )
+            ? data.informationMessage
+            : [];
+
+
+    /* =====================================================
+       RENDER
     ===================================================== */
 
     pnrResult.innerHTML = `
 
-        <div class="pnr-result-header">
-
-            <div>
-
-                <span>
-                    PNR NUMBER
-                </span>
-
-                <strong>
-                    ${escapeHtml(
-                        data.pnrNumber || "—"
-                    )}
-                </strong>
-
-            </div>
+        <div class="pnr-result-container">
 
 
-            <div class="pnr-status-pill">
+            <!-- =========================================
+                 TRAIN
+            ========================================== -->
 
-                ${charting.isPrepared
-                    ? "CHART PREPARED"
-                    : "CHART NOT PREPARED"
-                }
+            <div class="pnr-train-header">
 
-            </div>
-
-        </div>
-
-
-
-        <!-- TRAIN -->
-
-        <div class="pnr-result-card">
-
-            <h3>
-                🚆 Train Information
-            </h3>
+                <h2>
+                    ${safe(trainNumber)}
+                    ·
+                    ${safe(trainName)}
+                </h2>
 
 
-            <div class="pnr-info-grid">
+                <div class="pnr-route">
 
-                <div>
-                    <span>
-                        TRAIN
-                    </span>
+                    <div>
 
-                    <strong>
-                        ${escapeHtml(
-                            train.number || "—"
-                        )}
-                    </strong>
-                </div>
+                        <strong>
+                            ${safe(sourceCode)}
+                        </strong>
 
+                        <span>
+                            ${safe(sourceName)}
+                        </span>
 
-                <div>
-                    <span>
-                        TRAIN NAME
-                    </span>
-
-                    <strong>
-                        ${escapeHtml(
-                            train.name || "—"
-                        )}
-                    </strong>
-                </div>
+                    </div>
 
 
-                <div>
-                    <span>
-                        FROM
-                    </span>
-
-                    <strong>
-                        ${escapeHtml(
-                            source.name ||
-                            source.code ||
-                            "—"
-                        )}
-                    </strong>
-                </div>
+                    <div class="pnr-route-arrow">
+                        →
+                    </div>
 
 
-                <div>
-                    <span>
-                        TO
-                    </span>
+                    <div>
 
-                    <strong>
-                        ${escapeHtml(
-                            destination.name ||
-                            destination.code ||
-                            "—"
-                        )}
-                    </strong>
-                </div>
+                        <strong>
+                            ${safe(destinationCode)}
+                        </strong>
 
+                        <span>
+                            ${safe(destinationName)}
+                        </span>
 
-                <div>
-                    <span>
-                        BOARDING
-                    </span>
+                    </div>
 
-                    <strong>
-                        ${escapeHtml(
-                            boardingPoint.name ||
-                            boardingPoint.code ||
-                            "—"
-                        )}
-                    </strong>
-                </div>
-
-
-                <div>
-                    <span>
-                        RESERVATION UPTO
-                    </span>
-
-                    <strong>
-                        ${escapeHtml(
-                            reservationUpto.name ||
-                            reservationUpto.code ||
-                            "—"
-                        )}
-                    </strong>
                 </div>
 
             </div>
 
-        </div>
+
+            <!-- =========================================
+                 JOURNEY
+            ========================================== -->
+
+            <section class="pnr-card">
+
+                <h3>
+                    📅 Journey Information
+                </h3>
 
 
+                <div class="pnr-info-grid">
 
-        <!-- JOURNEY -->
+                    ${
+                        journeyDate
+                            ? `
+                                <div>
+                                    <span>
+                                        JOURNEY
+                                    </span>
 
-        <div class="pnr-result-card">
+                                    <strong>
+                                        ${formatJourneyDate(
+                                            journeyDate
+                                        )}
+                                    </strong>
+                                </div>
+                            `
+                            : ""
+                    }
 
-            <h3>
-                📅 Journey Information
-            </h3>
+
+                    ${
+                        journeyClass
+                            ? `
+                                <div>
+                                    <span>
+                                        CLASS
+                                    </span>
+
+                                    <strong>
+                                        ${safe(
+                                            journeyClass
+                                        )}
+                                        ${
+                                            getClassName(
+                                                journeyClass
+                                            )
+                                                ? `
+                                                    <small
+                                                        style="
+                                                            font-weight:400;
+                                                            margin-left:6px;
+                                                        "
+                                                    >
+                                                        ${safe(
+                                                            getClassName(
+                                                                journeyClass
+                                                            )
+                                                        )}
+                                                    </small>
+                                                `
+                                                : ""
+                                        }
+                                    </strong>
+                                </div>
+                            `
+                            : ""
+                    }
 
 
-            <div class="pnr-info-grid">
+                    ${
+                        quota
+                            ? `
+                                <div>
+                                    <span>
+                                        QUOTA
+                                    </span>
 
-                <div>
-                    <span>
-                        JOURNEY DATE
-                    </span>
+                                    <strong>
+                                        ${safe(quota)}
+                                    </strong>
+                                </div>
+                            `
+                            : ""
+                    }
 
-                    <strong>
-                        ${escapeHtml(
-                            journey.date || "—"
-                        )}
-                    </strong>
+
+                    ${
+                        bookingFare !== null
+                            ? `
+                                <div>
+                                    <span>
+                                        FARE
+                                    </span>
+
+                                    <strong>
+                                        ₹${safe(
+                                            bookingFare
+                                        )}
+                                    </strong>
+                                </div>
+                            `
+                            : ""
+                    }
+
                 </div>
 
+            </section>
 
-                <div>
-                    <span>
-                        CLASS
-                    </span>
 
-                    <strong>
-                        ${escapeHtml(
-                            journey.class || "—"
-                        )}
-                    </strong>
+            <!-- =========================================
+                 PASSENGER
+            ========================================== -->
+
+            ${
+                passengers.length
+                    ? `
+                        <section class="pnr-card">
+
+                            <h3>
+                                👤 Passenger Status
+                            </h3>
+
+                            ${passengerHTML}
+
+                        </section>
+                    `
+                    : ""
+            }
+
+
+            <!-- =========================================
+                 CHART STATUS
+            ========================================== -->
+
+            <section class="pnr-card">
+
+                <h3>
+                    📋 Chart Status
+                </h3>
+
+
+                <div class="pnr-info-grid">
+
+                    ${
+                        chartStatus
+                            ? `
+                                <div>
+                                    <span>
+                                        STATUS
+                                    </span>
+
+                                    <strong>
+                                        ${safe(
+                                            chartStatus
+                                        )}
+                                    </strong>
+                                </div>
+                            `
+                            : ""
+                    }
+
+
+                    ${
+                        charting.isPrepared !== undefined
+                            ? `
+                                <div>
+                                    <span>
+                                        CHART PREPARED
+                                    </span>
+
+                                    <strong>
+                                        ${
+                                            charting.isPrepared
+                                                ? "Yes"
+                                                : "No"
+                                        }
+                                    </strong>
+                                </div>
+                            `
+                            : ""
+                    }
+
+
+                    ${
+                        chartLink
+                            ? `
+                                <div>
+                                    <span>
+                                        CHART LINK
+                                    </span>
+
+                                    <strong>
+                                        <a
+                                            href="${safe(chartLink)}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            Open Chart
+                                        </a>
+                                    </strong>
+                                </div>
+                            `
+                            : ""
+                    }
+
                 </div>
 
-
-                <div>
-                    <span>
-                        QUOTA
-                    </span>
-
-                    <strong>
-                        ${escapeHtml(
-                            journey.quota || "—"
-                        )}
-                    </strong>
-                </div>
+            </section>
 
 
-                <div>
-                    <span>
-                        BOOKING FARE
-                    </span>
+            <!-- =========================================
+                 INFORMATION MESSAGE
+            ========================================== -->
 
-                    <strong>
-                        ${
-                            journey.bookingFare
-                                ? `₹${escapeHtml(
-                                    journey.bookingFare
-                                )}`
-                                : "—"
-                        }
-                    </strong>
-                </div>
-
-            </div>
-
-        </div>
-
-
-
-        <!-- PASSENGERS -->
-
-        <div class="pnr-result-card">
-
-            <h3>
-                👤 Passenger Status
-            </h3>
-
-
-            <div class="pnr-passengers">
-
-                ${passengerHTML}
-
-            </div>
-
-        </div>
-
-
-
-        <!-- CHART -->
-
-        <div class="pnr-result-card">
-
-            <h3>
-                📋 Chart Status
-            </h3>
-
-
-            <div class="pnr-info-grid">
-
-                <div>
-                    <span>
-                        STATUS
-                    </span>
-
-                    <strong>
-                        ${escapeHtml(
-                            charting.status || "—"
-                        )}
-                    </strong>
-                </div>
-
-
-                <div>
-                    <span>
-                        CHART PREPARED
-                    </span>
-
-                    <strong>
-                        ${
-                            charting.isPrepared
-                                ? "Yes"
-                                : "No"
-                        }
-                    </strong>
-                </div>
-
-            </div>
+            ${
+                messages.length
+                    ? messages
+                        .map(
+                            message => `
+                                <div
+                                    class="pnr-message"
+                                >
+                                    ${safe(message)}
+                                </div>
+                            `
+                        )
+                        .join("")
+                    : ""
+            }
 
         </div>
 
@@ -7897,6 +8485,11 @@ function renderPNRResult(data) {
         "hidden"
     );
 
+
+    console.log(
+        "✅ RailRadar PNR information rendered:",
+        data
+    );
 }
 /* =========================================================
    PNR BUTTON LOADING
